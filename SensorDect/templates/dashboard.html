@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - SensorDect</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+            color: #333;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 40px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        .status-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .status-card {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .status-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .status-card h3 {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-value {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .status-online {
+            color: #10b981;
+        }
+
+        .status-offline {
+            color: #ef4444;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+            animation: pulse 2s infinite;
+        }
+
+        .indicator-online {
+            background: #10b981;
+        }
+
+        .indicator-offline {
+            background: #ef4444;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .last-event {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .event-icon {
+            font-size: 32px;
+        }
+
+        .event-details {
+            flex: 1;
+        }
+
+        .event-time {
+            font-size: 18px;
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .event-date {
+            font-size: 12px;
+            color: #999;
+            margin-top: 2px;
+        }
+
+        .battery-wifi-container {
+            display: flex;
+            gap: 30px;
+        }
+
+        .indicator-wrapper {
+            flex: 1;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #e5e7eb;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-top: 10px;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 12px;
+            transition: width 0.3s;
+        }
+
+        .battery-fill {
+            background: linear-gradient(90deg, #10b981 0%, #34d399 100%);
+        }
+
+        .wifi-fill {
+            background: linear-gradient(90deg, #3b82f6 0%, #60a5fa 100%);
+        }
+
+        .chart-container {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .chart-header h2 {
+            font-size: 20px;
+            color: #333;
+        }
+
+        .chart-tabs {
+            display: flex;
+            gap: 10px;
+        }
+
+        .tab-button {
+            padding: 8px 20px;
+            border: 1px solid #e5e7eb;
+            background: white;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .tab-button:hover {
+            background: #f9fafb;
+        }
+
+        .tab-button.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .chart {
+            height: 300px;
+            display: flex;
+            align-items: flex-end;
+            gap: 15px;
+            padding: 20px 0;
+        }
+
+        .bar-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .bar {
+            width: 100%;
+            background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+            border-radius: 5px 5px 0 0;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .bar:hover {
+            opacity: 0.8;
+            transform: translateY(-5px);
+        }
+
+        .bar-label {
+            font-size: 12px;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .bar-value {
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .config-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .config-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .config-button:active {
+            transform: translateY(0);
+        }
+
+        .button-container {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .icon {
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🔔 SensorDect Dashboard</h1>
+        <p>Monitoramento em tempo real</p>
+    </div>
+
+    <div class="container">
+        <!-- Status Cards -->
+        <div class="status-bar">
+            <!-- Status Online/Offline -->
+            <div class="status-card">
+                <h3>Status do Sistema</h3>
+                <div class="status-value status-online">
+                    <span class="status-indicator indicator-online"></span>
+                    Online
+                </div>
+            </div>
+
+            <!-- Último Evento -->
+            <div class="status-card">
+                <h3>Último Evento Registrado</h3>
+                <div class="last-event">
+                    <div class="event-icon">🔔</div>
+                    <div class="event-details">
+                        <div class="event-time">14:32:15</div>
+                        <div class="event-date">15 de Dezembro, 2025</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bateria e WiFi -->
+            <div class="status-card">
+                <h3>Indicadores</h3>
+                <div class="battery-wifi-container">
+                    <div class="indicator-wrapper">
+                        <div style="font-size: 12px; color: #666; margin-bottom: 5px;">
+                            🔋 Bateria
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill battery-fill" style="width: 85%;">
+                                85%
+                            </div>
+                        </div>
+                    </div>
+                    <div class="indicator-wrapper">
+                        <div style="font-size: 12px; color: #666; margin-bottom: 5px;">
+                            📶 WiFi
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill wifi-fill" style="width: 92%;">
+                                92%
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gráfico de Ativações -->
+        <div class="chart-container">
+            <div class="chart-header">
+                <h2>📊 Ativações por Horário</h2>
+                <div class="chart-tabs">
+                    <button class="tab-button active" onclick="switchTab('today')">Hoje</button>
+                    <button class="tab-button" onclick="switchTab('week')">Semana</button>
+                    <button class="tab-button" onclick="switchTab('month')">Mês</button>
+                </div>
+            </div>
+            <div class="chart" id="chart">
+                <!-- Barras do gráfico serão geradas por JavaScript -->
+            </div>
+        </div>
+
+        <!-- Botão de Configurações -->
+        <div class="button-container">
+            <button class="config-button" onclick="goToConfig()">
+                <span class="icon">⚙️</span>
+                Configurações
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Dados de exemplo para o gráfico
+        const chartData = {
+            today: [
+                { label: '00h', value: 2 },
+                { label: '04h', value: 0 },
+                { label: '08h', value: 5 },
+                { label: '12h', value: 8 },
+                { label: '16h', value: 12 },
+                { label: '20h', value: 7 }
+            ],
+            week: [
+                { label: 'Seg', value: 15 },
+                { label: 'Ter', value: 22 },
+                { label: 'Qua', value: 18 },
+                { label: 'Qui', value: 25 },
+                { label: 'Sex', value: 30 },
+                { label: 'Sáb', value: 12 },
+                { label: 'Dom', value: 8 }
+            ],
+            month: [
+                { label: 'Sem 1', value: 45 },
+                { label: 'Sem 2', value: 62 },
+                { label: 'Sem 3', value: 58 },
+                { label: 'Sem 4', value: 71 }
+            ]
+        };
+
+        let currentTab = 'today';
+
+        function renderChart(data) {
+            const chart = document.getElementById('chart');
+            const maxValue = Math.max(...data.map(d => d.value));
+            
+            chart.innerHTML = data.map(item => {
+                const height = maxValue > 0 ? (item.value / maxValue) * 100 : 0;
+                return `
+                    <div class="bar-wrapper">
+                        <div class="bar" style="height: ${height}%;">
+                            <div class="bar-value">${item.value}</div>
+                        </div>
+                        <div class="bar-label">${item.label}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function switchTab(tab) {
+            currentTab = tab;
+            
+            // Atualizar botões ativos
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Renderizar gráfico
+            renderChart(chartData[tab]);
+        }
+
+        function goToConfig() {
+            window.location.href = '/config';
+        }
+
+        // Simular atualização de status em tempo real
+        function updateStatus() {
+            const statusValue = document.querySelector('.status-value');
+            const isOnline = Math.random() > 0.1; // 90% chance de estar online
+            
+            if (isOnline) {
+                statusValue.innerHTML = '<span class="status-indicator indicator-online"></span>Online';
+                statusValue.className = 'status-value status-online';
+            } else {
+                statusValue.innerHTML = '<span class="status-indicator indicator-offline"></span>Offline';
+                statusValue.className = 'status-value status-offline';
+            }
+        }
+
+        function updateLastEvent() {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('pt-BR');
+            const dateStr = now.toLocaleDateString('pt-BR', { 
+                day: 'numeric', 
+                month: 'long', 
+                year: 'numeric' 
+            });
+            
+            document.querySelector('.event-time').textContent = timeStr;
+            document.querySelector('.event-date').textContent = dateStr;
+        }
+
+        function updateIndicators() {
+            // Simular variação de bateria e WiFi
+            const battery = Math.floor(Math.random() * 20) + 75; // 75-95%
+            const wifi = Math.floor(Math.random() * 15) + 80; // 80-95%
+            
+            const batteryFill = document.querySelector('.battery-fill');
+            const wifiFill = document.querySelector('.wifi-fill');
+            
+            batteryFill.style.width = battery + '%';
+            batteryFill.textContent = battery + '%';
+            
+            wifiFill.style.width = wifi + '%';
+            wifiFill.textContent = wifi + '%';
+        }
+
+        // Inicializar gráfico
+        renderChart(chartData.today);
+
+        // Atualizar dados periodicamente
+        setInterval(updateStatus, 5000);
+        setInterval(updateLastEvent, 10000);
+        setInterval(updateIndicators, 3000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configurações - SensorDect</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+            color: #333;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 40px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left h1 {
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+
+        .header-left p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .back-button {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        .config-section {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title .icon {
+            font-size: 24px;
+        }
+
+        .control-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .control-item:last-child {
+            border-bottom: none;
+        }
+
+        .control-info {
+            flex: 1;
+        }
+
+        .control-label {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .control-description {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .control-input {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        /* Toggle Switch */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: 0.4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: 0.4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        /* Range Slider */
+        .range-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            min-width: 250px;
+        }
+
+        .range-value {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: #e5e7eb;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            border: none;
+        }
+
+        /* Number Input */
+        .number-input {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        input[type="number"] {
+            width: 100px;
+            padding: 10px 15px;
+            border: 2px solid #e5e7eb;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: 600;
+            text-align: center;
+            transition: border-color 0.3s;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .unit {
+            font-size: 14px;
+            color: #666;
+            font-weight: 500;
+        }
+
+        /* Action Buttons */
+        .action-button {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #4b5563;
+            transform: translateY(-2px);
+        }
+
+        .action-button:active {
+            transform: translateY(0);
+        }
+
+        /* File Upload */
+        .file-upload {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .file-label {
+            padding: 12px 25px;
+            background: #f3f4f6;
+            border: 2px dashed #d1d5db;
+            border-radius: 5px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            color: #666;
+            transition: all 0.3s;
+        }
+
+        .file-label:hover {
+            background: #e5e7eb;
+            border-color: #667eea;
+        }
+
+        .file-name {
+            font-size: 13px;
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .upload-progress {
+            width: 100%;
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 4px;
+            overflow: hidden;
+            display: none;
+        }
+
+        .upload-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        /* Status Badge */
+        .status-badge {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .badge-success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .badge-warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-info {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        /* Save Footer */
+        .save-footer {
+            background: white;
+            border-radius: 10px;
+            padding: 20px 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .save-info {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .save-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .control-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .range-container {
+                width: 100%;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-left">
+            <h1>⚙️ Configurações</h1>
+            <p>Controle e ajuste do sistema SensorDect</p>
+        </div>
+        <button class="back-button" onclick="goToDashboard()">
+            ← Voltar ao Dashboard
+        </button>
+    </div>
+
+    <div class="container">
+        <!-- Controle do Alarme -->
+        <div class="config-section">
+            <div class="section-title">
+                <span class="icon">🔔</span>
+                Controle do Alarme
+            </div>
+
+            <div class="control-item">
+                <div class="control-info">
+                    <div class="control-label">Ativar Alarme</div>
+                    <div class="control-description">Liga ou desliga o sistema de alarme principal</div>
+                </div>
+                <div class="control-input">
+                    <label class="switch">
+                        <input type="checkbox" id="alarmToggle" checked onchange="updateAlarmStatus()">
+                        <span class="slider"></span>
+                    </label>
+                    <span class="status-badge badge-success" id="alarmStatus">Ativo</span>
+                </div>
+            </div>
+
+            <div class="control-item">
+                <div class="control-info">
+                    <div class="control-label">Modo Silencioso</div>
+                    <div class="control-description">Desativa notificações sonoras, mantém alertas visuais</div>
+                </div>
+                <div class="control-input">
+                    <label class="switch">
+                        <input type="checkbox" id="silentMode" onchange="updateSilentMode()">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="control-item">
+                <div class="control-info">
+                    <div class="control-label">Sensibilidade do Sensor</div>
+                    <div class="control-description">Ajuste a sensibilidade de detecção (baixa, média, alta)</div>
+                </div>
+                <div class="control-input">
+                    <div class="range-container">
+                        <div class="range-value">
+                            <span>Baixa</span>
+                            <span id="sensitivityValue">Média</span>
+                            <span>Alta</span>
+                        </div>
+                        <input type="range" id="sensitivity" min="1" max="3" value="2" 
+                               oninput="updateSensitivity(this.value)">
+                    </div>
+                </div>
+            </div>
+
+            <div class="control-item">
+                <div class="control-info">
+                    <div class="control-label">Tempo de Alarme</div>
+                    <div class="control-description">Duração do alarme quando ativado</div>
+                </div>
+                <div class="control-input">
+                    <div class="number-input">
+                        <input type="number" id="alarmDuration" min="5" max="300" value="30" step="5">
+                        <span class="unit">segundos</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Manutenção do Sistema -->
+        <div class="config-section">
+            <div class="section-title">
+                <span class="icon">🔧</span>
+                Manutenção do Sistema
+            </div>
+
+            <div class="control-item">
+                <div class="control-info">
+                    <div class="control-label">Reset Remoto</div>
+                    <div class="control-description">Reinicia o dispositivo remotamente (pode levar até 30 segundos)</div>
+                </div>
+                <div class="control-input">
+                    <button class="action-button btn-danger" onclick="resetDevice()">
+                        <span>🔄</span>
+                        Reiniciar Dispositivo
+                    </button>
+                </div>
+            </div>
+
+            <div class="control-item">
+                <div class="control-info">
+                    <div class="control-label">Atualização de Firmware (OTA)</div>
+                    <div class="control-description">Atualize o software do dispositivo pela rede sem conexão USB</div>
+                    <div style="margin-top: 10px;">
+                        <span class="status-badge badge-info">Versão Atual: v2.3.1</span>
+                    </div>
+                </div>
+                <div class="control-input">
+                    <div class="file-upload">
+                        <div class="file-input-wrapper">
+                            <input type="file" id="firmwareFile" accept=".bin,.hex" onchange="selectFile(this)">
+                            <label for="firmwareFile" class="file-label">
+                                <span>📁</span>
+                                Selecionar Arquivo
+                            </label>
+                        </div>
+                        <div class="file-name" id="fileName"></div>
+                        <div class="upload-progress" id="uploadProgress">
+                            <div class="upload-progress-bar" id="progressBar"></div>
+                        </div>
+                        <button class="action-button btn-primary" id="uploadBtn" 
+                                onclick="uploadFirmware()" style="display: none;">
+                            <span>⬆️</span>
+                            Iniciar Atualização
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="control-item">
+                <div class="control-info">
+                    <div class="control-label">Verificar Atualizações</div>
+                    <div class="control-description">Buscar novas versões de firmware disponíveis</div>
+                </div>
+                <div class="control-input">
+                    <button class="action-button btn-secondary" onclick="checkUpdates()">
+                        <span>🔍</span>
+                        Verificar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Salvar Configurações -->
+        <div class="save-footer">
+            <div class="save-info">
+                💾 As alterações serão aplicadas imediatamente ao salvar
+            </div>
+            <div class="save-actions">
+                <button class="action-button btn-secondary" onclick="cancelChanges()">
+                    Cancelar
+                </button>
+                <button class="action-button btn-primary" onclick="saveConfig()">
+                    <span>✓</span>
+                    Salvar Configurações
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Atualizar status do alarme
+        function updateAlarmStatus() {
+            const toggle = document.getElementById('alarmToggle');
+            const status = document.getElementById('alarmStatus');
+            
+            if (toggle.checked) {
+                status.textContent = 'Ativo';
+                status.className = 'status-badge badge-success';
+            } else {
+                status.textContent = 'Inativo';
+                status.className = 'status-badge badge-warning';
+            }
+        }
+
+        // Atualizar modo silencioso
+        function updateSilentMode() {
+            const silentMode = document.getElementById('silentMode');
+            if (silentMode.checked) {
+                showNotification('Modo silencioso ativado', 'info');
+            } else {
+                showNotification('Modo silencioso desativado', 'info');
+            }
+        }
+
+        // Atualizar sensibilidade
+        function updateSensitivity(value) {
+            const labels = ['', 'Baixa', 'Média', 'Alta'];
+            document.getElementById('sensitivityValue').textContent = labels[value];
+        }
+
+        // Selecionar arquivo de firmware
+        function selectFile(input) {
+            const fileName = document.getElementById('fileName');
+            const uploadBtn = document.getElementById('uploadBtn');
+            
+            if (input.files.length > 0) {
+                fileName.textContent = `📄 ${input.files[0].name}`;
+                uploadBtn.style.display = 'flex';
+            } else {
+                fileName.textContent = '';
+                uploadBtn.style.display = 'none';
+            }
+        }
+
+        // Upload de firmware
+        function uploadFirmware() {
+            const progress = document.getElementById('uploadProgress');
+            const progressBar = document.getElementById('progressBar');
+            const uploadBtn = document.getElementById('uploadBtn');
+            
+            uploadBtn.disabled = true;
+            progress.style.display = 'block';
+            
+            // Simular upload
+            let percent = 0;
+            const interval = setInterval(() => {
+                percent += 5;
+                progressBar.style.width = percent + '%';
+                
+                if (percent >= 100) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        progress.style.display = 'none';
+                        progressBar.style.width = '0%';
+                        uploadBtn.disabled = false;
+                        showNotification('Firmware atualizado com sucesso!', 'success');
+                    }, 500);
+                }
+            }, 100);
+        }
+
+        // Reset do dispositivo
+        function resetDevice() {
+            if (confirm('Tem certeza que deseja reiniciar o dispositivo? Esta ação pode levar até 30 segundos.')) {
+                showNotification('Reiniciando dispositivo...', 'warning');
+                setTimeout(() => {
+                    showNotification('Dispositivo reiniciado com sucesso!', 'success');
+                }, 2000);
+            }
+        }
+
+        // Verificar atualizações
+        function checkUpdates() {
+            showNotification('Verificando atualizações...', 'info');
+            setTimeout(() => {
+                const hasUpdate = Math.random() > 0.5;
+                if (hasUpdate) {
+                    showNotification('Nova versão disponível: v2.4.0', 'success');
+                } else {
+                    showNotification('Você está usando a versão mais recente', 'info');
+                }
+            }, 1500);
+        }
+
+        // Salvar configurações
+        function saveConfig() {
+            const config = {
+                alarmActive: document.getElementById('alarmToggle').checked,
+                silentMode: document.getElementById('silentMode').checked,
+                sensitivity: document.getElementById('sensitivity').value,
+                alarmDuration: document.getElementById('alarmDuration').value
+            };
+            
+            console.log('Salvando configurações:', config);
+            showNotification('Configurações salvas com sucesso!', 'success');
+        }
+
+        // Cancelar alterações
+        function cancelChanges() {
+            if (confirm('Descartar todas as alterações?')) {
+                location.reload();
+            }
+        }
+
+        // Voltar ao dashboard
+        function goToDashboard() {
+            window.location.href = '/dashboard';
+        }
+
+        // Sistema de notificações
+        function showNotification(message, type) {
+            // Criar elemento de notificação
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 25px;
+                background: ${type === 'success' ? '#10b981' : type === 'warning' ? '#f59e0b' : '#3b82f6'};
+                color: white;
+                border-radius: 8px;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+                z-index: 1000;
+                animation: slideIn 0.3s ease;
+            `;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        // Adicionar animações CSS
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from {
+                    transform: translateX(400px);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+            @keyframes slideOut {
+                from {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+                to {
+                    transform: translateX(400px);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
