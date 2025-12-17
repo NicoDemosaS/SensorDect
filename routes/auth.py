@@ -1,8 +1,7 @@
 # Rotas de autenticacao
 from flask import Blueprint, render_template, redirect, request, session, url_for
-
+from models import verify_user
 auth_bp = Blueprint('auth', __name__)
-
 
 @auth_bp.route("/")
 def home():    
@@ -18,10 +17,13 @@ def login():
         # Captura os dados enviados pelo formulário
         username = request.form.get("username")
         password = request.form.get("password")
-        
+
         # Aqui você pode adicionar lógica de validação
         print(f"Login tentado - Username: {username}, Password: {password}")
-        if username == "Maquiavel" and password == "haha!":
+        print(verify_user(username, password))
+
+         # Verifica as credenciais do usuário
+        if verify_user(username, password):
             session['logged_in'] = True
             session['username'] = username
             return redirect("/dashboard")

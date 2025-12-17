@@ -13,4 +13,5 @@ app.register_blueprint(config_bp)
 app.register_blueprint(alarm_bp)
 
 if __name__ == "__main__":
+
     app.run(debug=True)
