@@ -49,7 +49,11 @@
         {% for candidatura in aceitas %}
         <div class="trabalho-card">
             <div class="card-header">
+                {% if candidatura.confirmado_empresa and candidatura.compareceu %}
+                <span class="badge badge-info">✅ Concluído</span>
+                {% else %}
                 <span class="badge badge-success">✓ Confirmado</span>
+                {% endif %}
                 <span class="valor">R$ {{ "%.2f"|format(candidatura.trabalho.valor_liquido) }}</span>
             </div>
             <h3 class="card-title">{{ candidatura.trabalho.titulo }}</h3>
@@ -61,6 +65,19 @@
             <div class="meta">
                 <span>📍 {{ candidatura.trabalho.local_endereco }}, {{ candidatura.trabalho.local_cidade }}</span>
             </div>
+            
+            {% if candidatura.confirmado_empresa and candidatura.compareceu %}
+                {% set ja_avaliou = candidatura.avaliacoes.filter_by(avaliador_tipo='colaborador').first() %}
+                {% if not ja_avaliou %}
+                <a href="{{ url_for('colaborador.avaliar_empresa', candidatura_id=candidatura.id) }}" class="btn btn-primary btn-sm w-full mt-2">
+                    ⭐ Avaliar empresa
+                </a>
+                {% else %}
+                <p style="color: var(--success); font-size: 0.9rem; margin-top: 12px; text-align: center;">
+                    ⭐ Você avaliou com {{ ja_avaliou.nota }} estrelas
+                </p>
+                {% endif %}
+            {% endif %}
         </div>
         {% endfor %}
     </div>

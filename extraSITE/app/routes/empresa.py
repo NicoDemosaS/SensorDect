@@ -4,8 +4,9 @@ from functools import wraps
 from datetime import datetime
 
 from app import db
-from app.models import Trabalho, Candidatura
+from app.models import Trabalho, Candidatura, Avaliacao
 from app.forms.empresa import TrabalhoForm, EditarEmpresaForm
+from app.forms.avaliacao import AvaliacaoForm
 from app.utils.email import email_candidatura_aceita, email_candidatura_recusada, email_trabalho_confirmado
 
 empresa_bp = Blueprint('empresa', __name__)
@@ -272,3 +273,66 @@ def perfil():
         return redirect(url_for('empresa.perfil'))
     
     return render_template('empresa/perfil.html', form=form)
+
+
+@empresa_bp.route('/avaliar/<candidatura_id>', methods=['GET', 'POST'])
+@login_required
+@empresa_required
+def avaliar_colaborador(candidatura_id):
+    """Empresa avalia um colaborador após trabalho concluído."""
+    candidatura = Candidatura.query.get_or_404(candidatura_id)
+    trabalho = candidatura.trabalho
+    
+    # Verificações
+    if trabalho.empresa_id != current_user.id:
+        flash('Você não tem permissão para esta ação.', 'danger')
+        return redirect(url_for('empresa.dashboard'))
+    
+    if not candidatura.confirmado_empresa or not candidatura.compareceu:
+        flash('Só é possível avaliar colaboradores que compareceram ao trabalho.', 'warning')
+        return redirect(url_for('empresa.ver_trabalho', trabalho_id=trabalho.id))
+    
+    if Avaliacao.empresa_ja_avaliou(candidatura_id):
+        flash('Você já avaliou este colaborador para este trabalho.', 'info')
+        return redirect(url_for('empresa.ver_trabalho', trabalho_id=trabalho.id))
+    
+    form = AvaliacaoForm()
+    
+    if form.validate_on_submit():
+        Avaliacao.criar_avaliacao_empresa(
+            candidatura=candidatura,
+            nota=form.nota.data,
+            comentario=form.comentario.data,
+            pontualidade=form.pontualidade.data,
+            profissionalismo=form.profissionalismo.data,
+            comunicacao=form.comunicacao.data
+        )
+        db.session.commit()
+        
+        flash(f'Avaliação de {candidatura.colaborador.nome} enviada com sucesso!', 'success')
+        return redirect(url_for('empresa.ver_trabalho', trabalho_id=trabalho.id))
+    
+    return render_template('avaliacao/avaliar.html',
+                         form=form,
+                         tipo_avaliacao='Colaborador',
+                         trabalho=trabalho,
+                         colaborador=candidatura.colaborador,
+                         empresa=None,
+                         url_for_voltar=url_for('empresa.ver_trabalho', trabalho_id=trabalho.id))
+
+
+@empresa_bp.route('/avaliacoes')
+@login_required
+@empresa_required
+def avaliacoes():
+    """Lista de avaliações recebidas pela empresa."""
+    avaliacoes = Avaliacao.query.filter_by(
+        avaliado_tipo='empresa',
+        avaliado_id=current_user.id
+    ).order_by(Avaliacao.criado_em.desc()).all()
+    
+    total_trabalhos = Trabalho.query.filter_by(empresa_id=current_user.id).count()
+    
+    return render_template('empresa/avaliacoes.html', 
+                         avaliacoes=avaliacoes,
+                         total_trabalhos=total_trabalhos)

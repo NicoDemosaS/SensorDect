@@ -103,6 +103,17 @@
                 {% else %}
                     {% if candidatura.compareceu %}
                     <p class="mt-1">✅ Presença confirmada</p>
+                    
+                    {% set ja_avaliou = candidatura.avaliacoes.filter_by(avaliador_tipo='empresa').first() %}
+                    {% if not ja_avaliou %}
+                    <a href="{{ url_for('empresa.avaliar_colaborador', candidatura_id=candidatura.id) }}" class="btn btn-primary btn-sm mt-1">
+                        ⭐ Avaliar colaborador
+                    </a>
+                    {% else %}
+                    <p style="color: var(--success); font-size: 0.9rem; margin-top: 8px;">
+                        ⭐ Avaliado com {{ ja_avaliou.nota }} estrelas
+                    </p>
+                    {% endif %}
                     {% else %}
                     <p class="mt-1">❌ Não compareceu</p>
                     {% endif %}

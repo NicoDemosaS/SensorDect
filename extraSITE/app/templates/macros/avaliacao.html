@@ -1,0 +1,99 @@
+{# Macros reutilizáveis para o sistema de avaliações #}
+
+{# Exibe estrelas baseado na nota (1-5) #}
+{% macro estrelas(nota, mostrar_numero=True) %}
+<div class="star-display">
+    {% for i in range(1, 6) %}
+        {% if i <= nota|int %}
+        <span class="star">⭐</span>
+        {% else %}
+        <span class="star empty">☆</span>
+        {% endif %}
+    {% endfor %}
+    {% if mostrar_numero %}
+    <span class="rating-text">{{ "%.1f"|format(nota) if nota else "0.0" }}</span>
+    {% endif %}
+</div>
+{% endmacro %}
+
+
+{# Badge de avaliação compacto #}
+{% macro rating_badge(nota, total_avaliacoes=0) %}
+<div class="rating-badge">
+    <span class="star">⭐</span>
+    <span>{{ "%.1f"|format(nota) if nota else "Novo" }}</span>
+    {% if total_avaliacoes > 0 %}
+    <span style="color: #a16207; font-weight: 400;">({{ total_avaliacoes }})</span>
+    {% endif %}
+</div>
+{% endmacro %}
+
+
+{# Card de avaliação completo #}
+{% macro avaliacao_card(avaliacao) %}
+<div class="avaliacao-card">
+    <div class="avaliacao-header">
+        <div class="avaliacao-autor">
+            {% if avaliacao.avaliador_tipo == 'empresa' %}
+            <div style="width: 40px; height: 40px; background: var(--gradient); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">🏢</div>
+            <div class="avaliacao-autor-info">
+                <h4>{{ avaliacao.avaliador.nome_fantasia }}</h4>
+                <p>{{ avaliacao.trabalho.titulo }}</p>
+            </div>
+            {% else %}
+            <img src="{{ url_for('static', filename='uploads/' + (avaliacao.avaliador.foto_perfil or 'default.png')) }}" alt="Foto">
+            <div class="avaliacao-autor-info">
+                <h4>{{ avaliacao.avaliador.nome }}</h4>
+                <p>{{ avaliacao.trabalho.titulo }}</p>
+            </div>
+            {% endif %}
+        </div>
+        
+        <div class="avaliacao-nota">
+            <span class="star">⭐</span>
+            <span>{{ avaliacao.nota }}</span>
+        </div>
+    </div>
+    
+    {% if avaliacao.comentario %}
+    <p class="avaliacao-comentario">"{{ avaliacao.comentario }}"</p>
+    {% endif %}
+    
+    {% if avaliacao.pontualidade or avaliacao.profissionalismo or avaliacao.comunicacao %}
+    <div class="avaliacao-categorias">
+        {% if avaliacao.pontualidade %}
+        <div class="avaliacao-categoria">
+            <span>Pontualidade:</span>
+            {% for i in range(avaliacao.pontualidade) %}<span class="star">⭐</span>{% endfor %}
+        </div>
+        {% endif %}
+        {% if avaliacao.profissionalismo %}
+        <div class="avaliacao-categoria">
+            <span>Profissionalismo:</span>
+            {% for i in range(avaliacao.profissionalismo) %}<span class="star">⭐</span>{% endfor %}
+        </div>
+        {% endif %}
+        {% if avaliacao.comunicacao %}
+        <div class="avaliacao-categoria">
+            <span>Comunicação:</span>
+            {% for i in range(avaliacao.comunicacao) %}<span class="star">⭐</span>{% endfor %}
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+    
+    <p style="font-size: 0.75rem; color: var(--gray-400); margin-top: 12px; margin-bottom: 0;">
+        {{ avaliacao.criado_em.strftime('%d/%m/%Y') }}
+    </p>
+</div>
+{% endmacro %}
+
+
+{# Resumo de avaliações para perfil #}
+{% macro resumo_avaliacoes(media, total) %}
+<div class="profile-rating">
+    {{ estrelas(media, mostrar_numero=False) }}
+    <span class="rating-text">{{ "%.1f"|format(media) if media else "0.0" }}</span>
+    <span class="rating-count">({{ total }} avaliação{% if total != 1 %}ões{% endif %})</span>
+</div>
+{% endmacro %}

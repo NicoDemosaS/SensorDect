@@ -1,0 +1,243 @@
+{% extends "base.html" %}
+
+{% block title %}Avaliar - {{ PLATFORM_NAME }}{% endblock %}
+
+{% block content %}
+<div class="container mt-3">
+    <div class="page-header" style="justify-content: center; text-align: center;">
+        <div>
+            <h1>⭐ Avaliar {{ tipo_avaliacao }}</h1>
+            <p style="color: var(--gray-500); margin-top: 8px;">Sua avaliação ajuda a comunidade!</p>
+        </div>
+    </div>
+    
+    <!-- Info do Trabalho -->
+    <div class="card" style="border-left: 4px solid var(--primary); margin-bottom: 24px;">
+        <div style="display: flex; justify-content: space-between; align-items: start; flex-wrap: wrap; gap: 16px;">
+            <div>
+                <span class="badge badge-info">{{ trabalho.categoria_display }}</span>
+                <h3 style="margin: 8px 0;">{{ trabalho.titulo }}</h3>
+                <p style="color: var(--gray-500); margin: 0;">
+                    📅 {{ trabalho.data.strftime('%d/%m/%Y') }} • 
+                    🕐 {{ trabalho.horario_inicio.strftime('%H:%M') }} - {{ trabalho.horario_fim.strftime('%H:%M') }}
+                </p>
+            </div>
+            <div style="text-align: right;">
+                {% if tipo_avaliacao == 'Colaborador' %}
+                    <p style="color: var(--gray-500); margin: 0 0 4px;">Avaliando:</p>
+                    <p style="font-weight: 600; color: var(--gray-800); margin: 0;">{{ colaborador.nome }}</p>
+                {% else %}
+                    <p style="color: var(--gray-500); margin: 0 0 4px;">Avaliando:</p>
+                    <p style="font-weight: 600; color: var(--gray-800); margin: 0;">{{ empresa.nome_fantasia }}</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Formulário de Avaliação -->
+    <div class="card">
+        <form method="POST">
+            {{ form.hidden_tag() }}
+            
+            <!-- Nota Principal -->
+            <div class="form-group">
+                <label style="font-weight: 600; font-size: 1.1rem; margin-bottom: 16px; display: block;">
+                    {{ form.nota.label.text }}
+                </label>
+                
+                <div class="rating-options">
+                    {% for subfield in form.nota %}
+                    <label class="rating-option">
+                        {{ subfield() }}
+                        <span class="rating-label">{{ subfield.label.text }}</span>
+                    </label>
+                    {% endfor %}
+                </div>
+                
+                {% for error in form.nota.errors %}
+                    <small style="color: var(--danger);">{{ error }}</small>
+                {% endfor %}
+            </div>
+            
+            <!-- Categorias Específicas -->
+            <div style="background: var(--gray-100); border-radius: var(--radius); padding: 24px; margin: 24px 0;">
+                <h4 style="margin: 0 0 16px; color: var(--gray-700);">Avaliações Específicas (opcional)</h4>
+                
+                <div class="grid grid-3">
+                    <!-- Pontualidade -->
+                    <div class="rating-category">
+                        <label>{{ form.pontualidade.label.text }}</label>
+                        <div class="star-rating">
+                            {% for subfield in form.pontualidade %}
+                            <label class="star-label" title="{{ subfield.label.text }} estrelas">
+                                {{ subfield() }}
+                                <span class="star">⭐</span>
+                            </label>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    
+                    <!-- Profissionalismo -->
+                    <div class="rating-category">
+                        <label>{{ form.profissionalismo.label.text }}</label>
+                        <div class="star-rating">
+                            {% for subfield in form.profissionalismo %}
+                            <label class="star-label" title="{{ subfield.label.text }} estrelas">
+                                {{ subfield() }}
+                                <span class="star">⭐</span>
+                            </label>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    
+                    <!-- Comunicação -->
+                    <div class="rating-category">
+                        <label>{{ form.comunicacao.label.text }}</label>
+                        <div class="star-rating">
+                            {% for subfield in form.comunicacao %}
+                            <label class="star-label" title="{{ subfield.label.text }} estrelas">
+                                {{ subfield() }}
+                                <span class="star">⭐</span>
+                            </label>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Comentário -->
+            <div class="form-group">
+                {{ form.comentario.label }}
+                {{ form.comentario(class="form-control", placeholder="Conte como foi a experiência...", rows=4) }}
+                <small style="color: var(--gray-500);">Seu comentário ficará visível para outros usuários.</small>
+                {% for error in form.comentario.errors %}
+                    <br><small style="color: var(--danger);">{{ error }}</small>
+                {% endfor %}
+            </div>
+            
+            <!-- Botões -->
+            <div style="display: flex; gap: 16px; margin-top: 32px;">
+                <a href="{{ url_for_voltar }}" class="btn btn-outline" style="flex: 1;">Cancelar</a>
+                <button type="submit" class="btn btn-primary btn-lg" style="flex: 2;">
+                    ⭐ Enviar Avaliação
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+/* Rating Options */
+.rating-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.rating-option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 20px;
+    background: var(--gray-100);
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: var(--transition);
+    border: 2px solid transparent;
+}
+
+.rating-option:hover {
+    background: rgba(124, 58, 237, 0.05);
+    border-color: var(--primary-light);
+}
+
+.rating-option input[type="radio"] {
+    width: 20px;
+    height: 20px;
+    accent-color: var(--primary);
+}
+
+.rating-option input[type="radio"]:checked + .rating-label {
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.rating-option:has(input:checked) {
+    background: rgba(124, 58, 237, 0.1);
+    border-color: var(--primary);
+}
+
+.rating-label {
+    font-size: 1rem;
+    color: var(--gray-700);
+}
+
+/* Star Rating */
+.rating-category {
+    text-align: center;
+}
+
+.rating-category > label {
+    display: block;
+    font-weight: 500;
+    color: var(--gray-600);
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+}
+
+.star-rating {
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+    flex-direction: row-reverse;
+}
+
+.star-label {
+    cursor: pointer;
+    padding: 4px;
+    transition: var(--transition);
+}
+
+.star-label input[type="radio"] {
+    display: none;
+}
+
+.star-label .star {
+    font-size: 1.5rem;
+    filter: grayscale(100%);
+    opacity: 0.4;
+    transition: var(--transition);
+}
+
+.star-label:hover .star,
+.star-label:hover ~ .star-label .star {
+    filter: grayscale(0%);
+    opacity: 1;
+}
+
+.star-label input:checked ~ .star,
+.star-label input:checked + .star,
+.star-label:has(input:checked) .star {
+    filter: grayscale(0%);
+    opacity: 1;
+}
+
+/* Quando uma estrela está selecionada, todas antes também ficam coloridas */
+.star-rating:has(input:checked) .star-label:has(input:checked) .star,
+.star-rating:has(input:checked) .star-label:has(input:checked) ~ .star-label .star {
+    filter: grayscale(0%);
+    opacity: 1;
+}
+
+/* Responsivo */
+@media (max-width: 640px) {
+    .grid-3 {
+        grid-template-columns: 1fr;
+    }
+    
+    .rating-option {
+        padding: 12px 16px;
+    }
+}
+</style>
+{% endblock %}

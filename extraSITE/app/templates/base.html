@@ -21,10 +21,12 @@
                     {% if current_user.tipo_usuario == 'colaborador' %}
                         <li><a href="{{ url_for('colaborador.dashboard') }}">Dashboard</a></li>
                         <li><a href="{{ url_for('colaborador.mural') }}">Oportunidades</a></li>
+                        <li><a href="{{ url_for('colaborador.avaliacoes') }}">⭐ Avaliações</a></li>
                         <li><a href="{{ url_for('colaborador.perfil') }}">Meu Perfil</a></li>
                     {% elif current_user.tipo_usuario == 'empresa' %}
                         <li><a href="{{ url_for('empresa.dashboard') }}">Dashboard</a></li>
                         <li><a href="{{ url_for('empresa.novo_trabalho') }}">+ Publicar</a></li>
+                        <li><a href="{{ url_for('empresa.avaliacoes') }}">⭐ Avaliações</a></li>
                         <li><a href="{{ url_for('empresa.perfil') }}">Perfil</a></li>
                     {% elif current_user.tipo_usuario == 'admin' %}
                         <li><a href="{{ url_for('admin.dashboard') }}">Painel Admin</a></li>

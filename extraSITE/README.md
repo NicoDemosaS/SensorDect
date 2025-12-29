@@ -197,6 +197,46 @@ extrasite/
 - candidatou_em, respondido_em
 ```
 
+### Avaliação
+```python
+- id (UUID)
+- candidatura_id (FK), trabalho_id (FK)
+- avaliador_tipo (empresa/colaborador)
+- avaliador_id, avaliado_tipo, avaliado_id
+- nota (1-5 estrelas)
+- comentario (texto livre)
+- pontualidade, profissionalismo, comunicacao (1-5, opcionais)
+- criado_em
+# Métodos estáticos:
+- empresa_ja_avaliou(candidatura_id)
+- colaborador_ja_avaliou(candidatura_id)
+- criar_avaliacao_empresa(candidatura, nota, ...)
+- criar_avaliacao_colaborador(candidatura, nota, ...)
+```
+
+---
+
+## ⭐ Sistema de Avaliações
+
+Após a conclusão de um trabalho (presença confirmada), ambas as partes podem se avaliar:
+
+### Fluxo de Avaliação
+1. **Empresa confirma presença** do colaborador no trabalho
+2. **Botão "⭐ Avaliar"** aparece para ambos
+3. Avaliação inclui:
+   - Nota geral (1-5 estrelas) - obrigatória
+   - Subcategorias: Pontualidade, Profissionalismo, Comunicação (opcionais)
+   - Comentário (opcional)
+4. Média é automaticamente recalculada no perfil do avaliado
+
+### Rotas de Avaliação
+| Rota | Descrição |
+|------|-----------|
+| `/colaborador/avaliar/<id>` | Colaborador avalia empresa |
+| `/empresa/avaliar/<id>` | Empresa avalia colaborador |
+| `/colaborador/avaliacoes` | Ver avaliações recebidas |
+| `/empresa/avaliacoes` | Ver avaliações recebidas |
+
 ---
 
 ## ⚙️ Configurações Dinâmicas

@@ -2138,3 +2138,151 @@ section {
         font-size: 1.5rem;
     }
 }
+
+/* ========================================
+   SISTEMA DE AVALIAÇÕES
+======================================== */
+
+/* Estrelas de avaliação */
+.star-display {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.star-display .star {
+    color: #fbbf24;
+    font-size: 1rem;
+}
+
+.star-display .star.empty {
+    color: var(--gray-300);
+}
+
+.star-display .rating-text {
+    margin-left: 8px;
+    font-weight: 600;
+    color: var(--gray-700);
+}
+
+/* Card de avaliação */
+.avaliacao-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 16px;
+    border: 1px solid var(--gray-200);
+}
+
+.avaliacao-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+}
+
+.avaliacao-autor {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.avaliacao-autor img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.avaliacao-autor-info h4 {
+    margin: 0;
+    font-size: 0.95rem;
+    color: var(--gray-900);
+}
+
+.avaliacao-autor-info p {
+    margin: 0;
+    font-size: 0.8rem;
+    color: var(--gray-500);
+}
+
+.avaliacao-nota {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: linear-gradient(135deg, #fef3c7, #fde68a);
+    padding: 6px 12px;
+    border-radius: var(--radius-full);
+}
+
+.avaliacao-nota .star {
+    color: #f59e0b;
+}
+
+.avaliacao-nota span {
+    font-weight: 700;
+    color: #92400e;
+}
+
+.avaliacao-comentario {
+    color: var(--gray-600);
+    font-style: italic;
+    line-height: 1.6;
+    margin: 0;
+}
+
+.avaliacao-categorias {
+    display: flex;
+    gap: 16px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--gray-200);
+    flex-wrap: wrap;
+}
+
+.avaliacao-categoria {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85rem;
+    color: var(--gray-600);
+}
+
+.avaliacao-categoria .star {
+    color: #fbbf24;
+    font-size: 0.85rem;
+}
+
+/* Badge de avaliação média */
+.rating-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: linear-gradient(135deg, #fef3c7, #fde68a);
+    padding: 4px 10px;
+    border-radius: var(--radius-full);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #92400e;
+}
+
+.rating-badge .star {
+    color: #f59e0b;
+}
+
+/* Perfil com avaliações */
+.profile-rating {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.profile-rating .star-display {
+    font-size: 1.1rem;
+}
+
+.profile-rating .rating-count {
+    font-size: 0.85rem;
+    color: var(--gray-500);
+}
