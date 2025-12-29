@@ -1,0 +1,266 @@
+{% extends "base.html" %}
+
+{% block title %}Configurações - Admin{% endblock %}
+
+{% block content %}
+<div class="container mt-3">
+    <div class="page-header">
+        <h1>⚙️ Configurações da Plataforma</h1>
+        <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline">← Voltar</a>
+    </div>
+    
+    <!-- Configurações Gerais -->
+    <div class="dashboard-card">
+        <h3 style="margin-bottom: 16px;">🏢 Configurações Gerais</h3>
+        <p style="color: var(--gray-500); margin-bottom: 24px;">
+            Informações básicas da plataforma exibidas em todo o site.
+        </p>
+        
+        <form method="POST" action="{{ url_for('admin.configuracoes') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="form_type" value="geral">
+            
+            <div class="grid grid-2">
+                <div class="form-group">
+                    <label for="platform_name">Nome da Plataforma</label>
+                    <input type="text" 
+                           id="platform_name" 
+                           name="platform_name" 
+                           class="form-control" 
+                           value="{{ config.platform_name }}"
+                           placeholder="ExtraSITE">
+                </div>
+                
+                <div class="form-group">
+                    <label for="platform_city">Cidade/Região de Atuação</label>
+                    <input type="text" 
+                           id="platform_city" 
+                           name="platform_city" 
+                           class="form-control" 
+                           value="{{ config.platform_city }}"
+                           placeholder="Medianeira - PR">
+                </div>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">
+                💾 Salvar Configurações Gerais
+            </button>
+        </form>
+    </div>
+    
+    <div class="grid grid-2 mt-3">
+        <!-- Taxa da Plataforma -->
+        <div class="dashboard-card">
+            <h3 style="margin-bottom: 16px;">💰 Taxa da Plataforma</h3>
+            <p style="color: var(--gray-500); margin-bottom: 24px;">
+                Percentual cobrado sobre cada trabalho.
+            </p>
+            
+            <form method="POST" action="{{ url_for('admin.configuracoes') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="form_type" value="taxa">
+                
+                <div class="form-group">
+                    <label for="take_rate">Taxa (%)</label>
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <input type="number" 
+                               id="take_rate" 
+                               name="take_rate" 
+                               class="form-control" 
+                               value="{{ config.taxa_atual|int }}" 
+                               min="0" 
+                               max="100" 
+                               step="1"
+                               style="max-width: 120px;">
+                        <span style="font-size: 1.5rem; color: var(--gray-500);">%</span>
+                    </div>
+                    <small style="color: var(--gray-500);">
+                        Colaborador recebe: {{ (100 - config.taxa_atual)|int }}%
+                    </small>
+                </div>
+                
+                <div style="background: var(--gray-100); padding: 16px; border-radius: 8px; margin: 16px 0;">
+                    <small style="color: var(--gray-600);">
+                        <strong>Exemplo:</strong> Trabalho de R$ 100 → Taxa R$ {{ "%.2f"|format(config.taxa_atual) }} → Colaborador recebe R$ {{ "%.2f"|format(100 - config.taxa_atual) }}
+                    </small>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">
+                    💾 Salvar Taxa
+                </button>
+            </form>
+        </div>
+        
+        <!-- Janela de Cancelamento -->
+        <div class="dashboard-card">
+            <h3 style="margin-bottom: 16px;">⏰ Janela de Cancelamento</h3>
+            <p style="color: var(--gray-500); margin-bottom: 24px;">
+                Tempo mínimo antes do trabalho para cancelar sem penalidade.
+            </p>
+            
+            <form method="POST" action="{{ url_for('admin.configuracoes') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="form_type" value="cancelamento">
+                
+                <div class="form-group">
+                    <label for="cancellation_hours">Horas de antecedência</label>
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <input type="number" 
+                               id="cancellation_hours" 
+                               name="cancellation_hours" 
+                               class="form-control" 
+                               value="{{ config.cancellation_hours }}" 
+                               min="0" 
+                               max="168"
+                               style="max-width: 120px;">
+                        <span style="color: var(--gray-500);">horas</span>
+                    </div>
+                    <small style="color: var(--gray-500);">
+                        Equivale a {{ (config.cancellation_hours / 24)|round(1) }} dias
+                    </small>
+                </div>
+                
+                <div class="alert alert-info" style="margin: 16px 0;">
+                    💡 Cancelamentos dentro dessa janela podem gerar penalidades.
+                </div>
+                
+                <button type="submit" class="btn btn-primary">
+                    💾 Salvar Janela
+                </button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Valores Sugeridos por Categoria -->
+    <div class="dashboard-card mt-3">
+        <h3 style="margin-bottom: 16px;">💵 Valores Sugeridos por Categoria</h3>
+        <p style="color: var(--gray-500); margin-bottom: 24px;">
+            Valores de referência por hora exibidos às empresas ao criar trabalhos.
+        </p>
+        
+        <form method="POST" action="{{ url_for('admin.configuracoes') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="form_type" value="valores">
+            
+            <div class="grid grid-3">
+                <div class="form-group">
+                    <label for="valor_garcom">🍽️ Garçom (R$/hora)</label>
+                    <input type="number" 
+                           id="valor_garcom" 
+                           name="valor_garcom" 
+                           class="form-control" 
+                           value="{{ config.valores_sugeridos.garcom }}" 
+                           min="0" 
+                           step="0.50">
+                </div>
+                
+                <div class="form-group">
+                    <label for="valor_bartender">🍸 Bartender (R$/hora)</label>
+                    <input type="number" 
+                           id="valor_bartender" 
+                           name="valor_bartender" 
+                           class="form-control" 
+                           value="{{ config.valores_sugeridos.bartender }}" 
+                           min="0" 
+                           step="0.50">
+                </div>
+                
+                <div class="form-group">
+                    <label for="valor_organizacao">📋 Organização (R$/hora)</label>
+                    <input type="number" 
+                           id="valor_organizacao" 
+                           name="valor_organizacao" 
+                           class="form-control" 
+                           value="{{ config.valores_sugeridos.organizacao }}" 
+                           min="0" 
+                           step="0.50">
+                </div>
+            </div>
+            
+            <div style="background: var(--gray-100); padding: 16px; border-radius: 8px; margin: 16px 0;">
+                <small style="color: var(--gray-600);">
+                    <strong>Como funciona:</strong> Ao criar um trabalho, a empresa vê um valor sugerido calculado: 
+                    <code>valor por hora × duração do evento</code>
+                </small>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">
+                💾 Salvar Valores
+            </button>
+        </form>
+    </div>
+    
+    <!-- Termos e Políticas -->
+    <div class="dashboard-card mt-3">
+        <h3 style="margin-bottom: 16px;">📜 Termos e Políticas</h3>
+        <p style="color: var(--gray-500); margin-bottom: 24px;">
+            Textos legais exibidos aos usuários. Suporta formatação Markdown.
+        </p>
+        
+        <form method="POST" action="{{ url_for('admin.configuracoes') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="form_type" value="termos">
+            
+            <div class="form-group">
+                <label for="termos_uso">📄 Termos de Uso</label>
+                <textarea id="termos_uso" 
+                          name="termos_uso" 
+                          class="form-control" 
+                          rows="6"
+                          placeholder="Digite os termos de uso da plataforma...">{{ config.termos_uso }}</textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="politica_privacidade">🔒 Política de Privacidade</label>
+                <textarea id="politica_privacidade" 
+                          name="politica_privacidade" 
+                          class="form-control" 
+                          rows="6"
+                          placeholder="Digite a política de privacidade...">{{ config.politica_privacidade }}</textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="politica_cancelamento">❌ Política de Cancelamento</label>
+                <textarea id="politica_cancelamento" 
+                          name="politica_cancelamento" 
+                          class="form-control" 
+                          rows="6"
+                          placeholder="Digite a política de cancelamento...">{{ config.politica_cancelamento }}</textarea>
+            </div>
+            
+            <div class="alert alert-warning" style="margin: 16px 0;">
+                ⚠️ <strong>Importante:</strong> Estas políticas serão exibidas durante o cadastro e em páginas dedicadas. 
+                Certifique-se de que estão de acordo com a legislação vigente.
+            </div>
+            
+            <button type="submit" class="btn btn-primary">
+                💾 Salvar Termos e Políticas
+            </button>
+        </form>
+    </div>
+    
+    <!-- Resumo das configurações -->
+    <div class="dashboard-card mt-3" style="background: linear-gradient(135deg, var(--primary-light), var(--secondary-light));">
+        <h3 style="margin-bottom: 16px;">📊 Resumo das Configurações Atuais</h3>
+        
+        <div class="grid grid-2" style="gap: 16px;">
+            <div style="background: white; padding: 16px; border-radius: 8px;">
+                <strong style="color: var(--gray-600);">Plataforma:</strong>
+                <p style="margin: 4px 0 0; font-size: 1.1rem;">{{ config.platform_name }}</p>
+            </div>
+            <div style="background: white; padding: 16px; border-radius: 8px;">
+                <strong style="color: var(--gray-600);">Região:</strong>
+                <p style="margin: 4px 0 0; font-size: 1.1rem;">{{ config.platform_city }}</p>
+            </div>
+            <div style="background: white; padding: 16px; border-radius: 8px;">
+                <strong style="color: var(--gray-600);">Taxa:</strong>
+                <p style="margin: 4px 0 0; font-size: 1.1rem;">{{ config.taxa_atual|int }}%</p>
+            </div>
+            <div style="background: white; padding: 16px; border-radius: 8px;">
+                <strong style="color: var(--gray-600);">Cancelamento:</strong>
+                <p style="margin: 4px 0 0; font-size: 1.1rem;">{{ config.cancellation_hours }}h antes</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

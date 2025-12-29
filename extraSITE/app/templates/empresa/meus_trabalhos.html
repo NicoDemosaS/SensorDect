@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}Meus Trabalhos - ExtraSITE{% endblock %}
+
+{% block content %}
+<div class="container mt-3">
+    <div class="flex gap-2" style="justify-content: space-between; align-items: center;">
+        <h1>Meus Trabalhos</h1>
+        <a href="{{ url_for('empresa.novo_trabalho') }}" class="btn btn-primary">+ Novo trabalho</a>
+    </div>
+    
+    {% if trabalhos %}
+    <table class="table mt-2">
+        <thead>
+            <tr>
+                <th>Título</th>
+                <th>Data</th>
+                <th>Vagas</th>
+                <th>Candidaturas</th>
+                <th>Status</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for trabalho in trabalhos %}
+            <tr>
+                <td>{{ trabalho.titulo }}</td>
+                <td>{{ trabalho.data.strftime('%d/%m/%Y') }}</td>
+                <td>{{ trabalho.vagas_preenchidas }}/{{ trabalho.vagas_total }}</td>
+                <td>{{ trabalho.candidaturas.count() }}</td>
+                <td>
+                    {% if trabalho.status == 'aberto' %}
+                    <span class="badge badge-success">Aberto</span>
+                    {% elif trabalho.status == 'concluido' %}
+                    <span class="badge badge-info">Concluído</span>
+                    {% elif trabalho.status == 'cancelado' %}
+                    <span class="badge badge-danger">Cancelado</span>
+                    {% else %}
+                    <span class="badge">{{ trabalho.status }}</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{{ url_for('empresa.ver_trabalho', trabalho_id=trabalho.id) }}" class="btn btn-outline btn-sm">Ver</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="card mt-2 text-center">
+        <p>Você ainda não publicou nenhum trabalho.</p>
+        <a href="{{ url_for('empresa.novo_trabalho') }}" class="btn btn-primary mt-1">Publicar primeiro trabalho</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

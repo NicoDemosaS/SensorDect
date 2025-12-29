@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}{{ colaborador.nome }} - Admin{% endblock %}
+
+{% block content %}
+<div class="container mt-3">
+    <a href="{{ url_for('admin.listar_colaboradores') }}">&larr; Voltar</a>
+    
+    <div class="card mt-2">
+        <div class="profile-header">
+            <img src="{{ url_for('static', filename='uploads/' + colaborador.foto_perfil) }}" alt="Foto" class="profile-avatar">
+            <div>
+                <h1>{{ colaborador.nome }}</h1>
+                <p>{{ colaborador.universidade }}</p>
+                {% if colaborador.status == 'ativo' %}
+                <span class="badge badge-success">Ativo</span>
+                {% else %}
+                <span class="badge badge-danger">Suspenso</span>
+                {% endif %}
+            </div>
+        </div>
+        
+        <hr style="margin: 1rem 0;">
+        
+        <div class="grid grid-2">
+            <div>
+                <h3>Contato</h3>
+                <p><strong>Email:</strong> {{ colaborador.email }}</p>
+                <p><strong>Telefone:</strong> {{ colaborador.telefone }}</p>
+                {% if colaborador.chave_pix %}
+                <p><strong>PIX:</strong> {{ colaborador.chave_pix }}</p>
+                {% endif %}
+            </div>
+            <div>
+                <h3>Estatísticas</h3>
+                <p><strong>Avaliação:</strong> {{ colaborador.avaliacao_media or 'Sem avaliações' }}</p>
+                <p><strong>Trabalhos:</strong> {{ colaborador.total_trabalhos }}</p>
+                <p><strong>Candidaturas:</strong> {{ colaborador.candidaturas.count() }}</p>
+            </div>
+        </div>
+        
+        {% if colaborador.bio %}
+        <h3 class="mt-2">Bio</h3>
+        <p>{{ colaborador.bio }}</p>
+        {% endif %}
+        
+        {% if colaborador.habilidades %}
+        <h3 class="mt-2">Habilidades</h3>
+        <p>{{ colaborador.habilidades }}</p>
+        {% endif %}
+        
+        <hr style="margin: 1rem 0;">
+        
+        <p><strong>Cadastrado em:</strong> {{ colaborador.criado_em.strftime('%d/%m/%Y às %H:%M') }}</p>
+    </div>
+    
+    <!-- Ações -->
+    <div class="card mt-2">
+        <h3>Ações</h3>
+        <div class="flex gap-1 mt-1">
+            {% if colaborador.status == 'ativo' %}
+            <form action="{{ url_for('admin.suspender_colaborador', colaborador_id=colaborador.id) }}" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="btn btn-danger" onclick="return confirm('Suspender este colaborador?')">🚫 Suspender</button>
+            </form>
+            {% else %}
+            <form action="{{ url_for('admin.ativar_colaborador', colaborador_id=colaborador.id) }}" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="btn btn-secondary">✅ Reativar</button>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+
+{% block title %}Sobre - {{ PLATFORM_NAME }}{% endblock %}
+
+{% block content %}
+<div class="container mt-3">
+    <div class="page-header" style="justify-content: center; text-align: center;">
+        <div>
+            <h1>🎓 Sobre a {{ PLATFORM_NAME }}</h1>
+            <p style="color: var(--gray-500); margin-top: 8px;">Conectando universitários a oportunidades</p>
+        </div>
+    </div>
+    
+    <!-- Missão Principal -->
+    <div class="policy-content">
+        <div class="policy-section" style="text-align: center; padding: 40px 20px;">
+            <h2 style="margin-bottom: 16px;">🚀 Nossa Missão</h2>
+            <p style="font-size: 1.1rem; max-width: 700px; margin: 0 auto; line-height: 1.8;">
+                Conectar <strong>estudantes universitários</strong> a oportunidades de trabalho flexíveis, 
+                enquanto oferecemos às <strong>empresas</strong> acesso rápido a mão de obra qualificada 
+                para eventos e serviços temporários.
+            </p>
+        </div>
+    </div>
+    
+    <!-- Cards de Benefícios -->
+    <div class="grid grid-2 mt-3">
+        <!-- Para Universitários -->
+        <div class="card" style="border-left: 4px solid var(--primary);">
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+                <div style="width: 48px; height: 48px; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+                    👨‍🎓
+                </div>
+                <h2 style="margin: 0; color: var(--gray-900);">Para Universitários</h2>
+            </div>
+            <ul style="list-style: none; padding: 0; margin: 0;">
+                <li style="padding: 12px 0; border-bottom: 1px solid var(--gray-200); display: flex; align-items: center; gap: 12px;">
+                    <span style="color: var(--success); font-size: 1.2rem;">✓</span>
+                    <span>Trabalhos flexíveis que se encaixam na sua rotina de estudos</span>
+                </li>
+                <li style="padding: 12px 0; border-bottom: 1px solid var(--gray-200); display: flex; align-items: center; gap: 12px;">
+                    <span style="color: var(--success); font-size: 1.2rem;">✓</span>
+                    <span>Pagamento garantido pela plataforma</span>
+                </li>
+                <li style="padding: 12px 0; border-bottom: 1px solid var(--gray-200); display: flex; align-items: center; gap: 12px;">
+                    <span style="color: var(--success); font-size: 1.2rem;">✓</span>
+                    <span>Construa experiência profissional diversificada</span>
+                </li>
+                <li style="padding: 12px 0; display: flex; align-items: center; gap: 12px;">
+                    <span style="color: var(--success); font-size: 1.2rem;">✓</span>
+                    <span>Sistema de avaliações que valoriza seu trabalho</span>
+                </li>
+            </ul>
+            <a href="{{ url_for('auth.cadastro_colaborador') }}" class="btn btn-primary mt-2" style="width: 100%;">
+                Quero me cadastrar como Colaborador
+            </a>
+        </div>
+        
+        <!-- Para Empresas -->
+        <div class="card" style="border-left: 4px solid var(--secondary);">
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+                <div style="width: 48px; height: 48px; background: linear-gradient(135deg, var(--secondary), #0891b2); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+                    🏢
+                </div>
+                <h2 style="margin: 0; color: var(--gray-900);">Para Empresas</h2>
+            </div>
+            <ul style="list-style: none; padding: 0; margin: 0;">
+                <li style="padding: 12px 0; border-bottom: 1px solid var(--gray-200); display: flex; align-items: center; gap: 12px;">
+                    <span style="color: var(--success); font-size: 1.2rem;">✓</span>
+                    <span>Acesso rápido a universitários qualificados</span>
+                </li>
+                <li style="padding: 12px 0; border-bottom: 1px solid var(--gray-200); display: flex; align-items: center; gap: 12px;">
+                    <span style="color: var(--success); font-size: 1.2rem;">✓</span>
+                    <span>Sem burocracia trabalhista</span>
+                </li>
+                <li style="padding: 12px 0; border-bottom: 1px solid var(--gray-200); display: flex; align-items: center; gap: 12px;">
+                    <span style="color: var(--success); font-size: 1.2rem;">✓</span>
+                    <span>Nota fiscal emitida pela plataforma</span>
+                </li>
+                <li style="padding: 12px 0; display: flex; align-items: center; gap: 12px;">
+                    <span style="color: var(--success); font-size: 1.2rem;">✓</span>
+                    <span>Garantia de substituição em caso de faltas</span>
+                </li>
+            </ul>
+            <a href="{{ url_for('auth.cadastro_empresa') }}" class="btn btn-secondary mt-2" style="width: 100%;">
+                Quero cadastrar minha Empresa
+            </a>
+        </div>
+    </div>
+    
+    <!-- Como Funciona -->
+    <div class="card mt-3">
+        <h2 style="text-align: center; margin-bottom: 24px;">📋 Como Funciona?</h2>
+        <div class="grid grid-4">
+            <div class="text-center" style="padding: 16px;">
+                <div style="width: 60px; height: 60px; background: linear-gradient(135deg, var(--primary-light), var(--primary)); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; color: white; font-weight: bold; font-size: 1.5rem;">1</div>
+                <h4 style="margin-bottom: 8px;">Cadastre-se</h4>
+                <p style="color: var(--gray-500); font-size: 0.9rem;">Empresa ou colaborador cria sua conta gratuitamente</p>
+            </div>
+            <div class="text-center" style="padding: 16px;">
+                <div style="width: 60px; height: 60px; background: linear-gradient(135deg, var(--primary-light), var(--primary)); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; color: white; font-weight: bold; font-size: 1.5rem;">2</div>
+                <h4 style="margin-bottom: 8px;">Publique ou Candidate-se</h4>
+                <p style="color: var(--gray-500); font-size: 0.9rem;">Empresas publicam vagas, colaboradores se candidatam</p>
+            </div>
+            <div class="text-center" style="padding: 16px;">
+                <div style="width: 60px; height: 60px; background: linear-gradient(135deg, var(--primary-light), var(--primary)); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; color: white; font-weight: bold; font-size: 1.5rem;">3</div>
+                <h4 style="margin-bottom: 8px;">Execute o Trabalho</h4>
+                <p style="color: var(--gray-500); font-size: 0.9rem;">Colaborador comparece e realiza o serviço</p>
+            </div>
+            <div class="text-center" style="padding: 16px;">
+                <div style="width: 60px; height: 60px; background: linear-gradient(135deg, var(--success), #059669); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; color: white; font-weight: bold; font-size: 1.5rem;">4</div>
+                <h4 style="margin-bottom: 8px;">Receba o Pagamento</h4>
+                <p style="color: var(--gray-500); font-size: 0.9rem;">Pagamento garantido após confirmação</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Números -->
+    <div class="grid grid-3 mt-3">
+        <div class="card text-center" style="background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white;">
+            <div style="font-size: 2.5rem; font-weight: bold;">{{ TAKE_RATE_PERCENT }}%</div>
+            <p style="opacity: 0.9; margin-top: 8px;">Taxa da Plataforma</p>
+        </div>
+        <div class="card text-center" style="background: linear-gradient(135deg, var(--secondary), #0891b2); color: white;">
+            <div style="font-size: 2.5rem; font-weight: bold;">{{ CANCELLATION_WINDOW_HOURS }}h</div>
+            <p style="opacity: 0.9; margin-top: 8px;">Janela de Cancelamento</p>
+        </div>
+        <div class="card text-center" style="background: linear-gradient(135deg, var(--success), #059669); color: white;">
+            <div style="font-size: 2.5rem; font-weight: bold;">100%</div>
+            <p style="opacity: 0.9; margin-top: 8px;">Pagamento Garantido</p>
+        </div>
+    </div>
+    
+    <!-- Botão Voltar -->
+    <div class="text-center mt-3">
+        <a href="{{ url_for('main.index') }}" class="btn btn-outline">← Voltar para Início</a>
+    </div>
+    
+    <!-- Links para outras páginas -->
+    <div class="grid grid-3 mt-3">
+        <a href="{{ url_for('main.termos') }}" class="card text-center" style="text-decoration: none; padding: 24px; transition: var(--transition);">
+            <div style="font-size: 2rem;">📄</div>
+            <p style="margin-top: 8px; color: var(--gray-600); font-weight: 500;">Termos de Uso</p>
+        </a>
+        <a href="{{ url_for('main.privacidade') }}" class="card text-center" style="text-decoration: none; padding: 24px; transition: var(--transition);">
+            <div style="font-size: 2rem;">🔒</div>
+            <p style="margin-top: 8px; color: var(--gray-600); font-weight: 500;">Política de Privacidade</p>
+        </a>
+        <a href="{{ url_for('main.cancelamento') }}" class="card text-center" style="text-decoration: none; padding: 24px; transition: var(--transition);">
+            <div style="font-size: 2rem;">❌</div>
+            <p style="margin-top: 8px; color: var(--gray-600); font-weight: 500;">Política de Cancelamento</p>
+        </a>
+    </div>
+</div>
+{% endblock %}

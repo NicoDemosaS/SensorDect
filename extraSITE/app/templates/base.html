@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}ExtraSITE{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="{{ url_for('main.index') }}" class="navbar-brand">ExtraSITE</a>
+            
+            <ul class="navbar-nav">
+                {% if current_user.is_authenticated %}
+                    {% if current_user.tipo_usuario == 'colaborador' %}
+                        <li><a href="{{ url_for('colaborador.dashboard') }}">Dashboard</a></li>
+                        <li><a href="{{ url_for('colaborador.mural') }}">Oportunidades</a></li>
+                        <li><a href="{{ url_for('colaborador.perfil') }}">Meu Perfil</a></li>
+                    {% elif current_user.tipo_usuario == 'empresa' %}
+                        <li><a href="{{ url_for('empresa.dashboard') }}">Dashboard</a></li>
+                        <li><a href="{{ url_for('empresa.novo_trabalho') }}">+ Publicar</a></li>
+                        <li><a href="{{ url_for('empresa.perfil') }}">Perfil</a></li>
+                    {% elif current_user.tipo_usuario == 'admin' %}
+                        <li><a href="{{ url_for('admin.dashboard') }}">Painel Admin</a></li>
+                    {% endif %}
+                    <li><a href="{{ url_for('auth.logout') }}" class="btn btn-ghost btn-sm">Sair</a></li>
+                {% else %}
+                    <li><a href="{{ url_for('auth.login') }}">Entrar</a></li>
+                    <li><a href="{{ url_for('auth.cadastro_colaborador') }}" class="btn btn-primary btn-sm">Começar agora</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Flash Messages -->
+    <div class="container mt-2">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul class="flashes">
+                {% for category, message in messages %}
+                    <li><div class="alert alert-{{ category }} animate-in">{{ message }}</div></li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <!-- Content -->
+    <main class="animate-in">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <span class="footer-brand">{{ PLATFORM_NAME }}</span>
+                    <p class="footer-description">Conectando universitários a oportunidades de trabalho flexíveis na região de {{ PLATFORM_CITY }}.</p>
+                </div>
+                <div>
+                    <h4>Para Estudantes</h4>
+                    <ul class="footer-links">
+                        <li><a href="{{ url_for('auth.cadastro_colaborador') }}">Cadastrar-se</a></li>
+                        <li><a href="{{ url_for('main.sobre') }}">Como funciona</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>Para Empresas</h4>
+                    <ul class="footer-links">
+                        <li><a href="{{ url_for('auth.cadastro_empresa') }}">Criar conta</a></li>
+                        <li><a href="{{ url_for('main.sobre') }}">Publicar trabalho</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>Legal</h4>
+                    <ul class="footer-links">
+                        <li><a href="{{ url_for('main.termos') }}">Termos de Uso</a></li>
+                        <li><a href="{{ url_for('main.privacidade') }}">Privacidade</a></li>
+                        <li><a href="{{ url_for('main.cancelamento') }}">Cancelamento</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 {{ PLATFORM_NAME }} - Plataforma de Freelance Universitário. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

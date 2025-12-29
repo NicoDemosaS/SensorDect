@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}Empresas - Admin{% endblock %}
+
+{% block content %}
+<div class="container mt-3">
+    <h1>Empresas</h1>
+    
+    <!-- Filtros -->
+    <div class="flex gap-1 mt-2">
+        <a href="{{ url_for('admin.listar_empresas') }}" class="btn {% if not filtro %}btn-primary{% else %}btn-outline{% endif %} btn-sm">Todas</a>
+        <a href="{{ url_for('admin.listar_empresas', status='aguardando_aprovacao') }}" class="btn {% if filtro == 'aguardando_aprovacao' %}btn-primary{% else %}btn-outline{% endif %} btn-sm">Pendentes</a>
+        <a href="{{ url_for('admin.listar_empresas', status='ativo') }}" class="btn {% if filtro == 'ativo' %}btn-primary{% else %}btn-outline{% endif %} btn-sm">Ativas</a>
+        <a href="{{ url_for('admin.listar_empresas', status='suspenso') }}" class="btn {% if filtro == 'suspenso' %}btn-primary{% else %}btn-outline{% endif %} btn-sm">Suspensas</a>
+    </div>
+    
+    {% if empresas %}
+    <table class="table mt-2">
+        <thead>
+            <tr>
+                <th>Empresa</th>
+                <th>CNPJ</th>
+                <th>Contato</th>
+                <th>Status</th>
+                <th>Cadastro</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for empresa in empresas %}
+            <tr>
+                <td>
+                    <strong>{{ empresa.nome_fantasia }}</strong><br>
+                    <small>{{ empresa.razao_social }}</small>
+                </td>
+                <td>{{ empresa.cnpj }}</td>
+                <td>{{ empresa.pessoa_contato }}<br><small>{{ empresa.telefone }}</small></td>
+                <td>
+                    {% if empresa.status == 'aguardando_aprovacao' %}
+                    <span class="badge badge-warning">Pendente</span>
+                    {% elif empresa.status == 'ativo' %}
+                    <span class="badge badge-success">Ativa</span>
+                    {% else %}
+                    <span class="badge badge-danger">Suspensa</span>
+                    {% endif %}
+                </td>
+                <td>{{ empresa.criado_em.strftime('%d/%m/%Y') }}</td>
+                <td>
+                    <a href="{{ url_for('admin.ver_empresa', empresa_id=empresa.id) }}" class="btn btn-outline btn-sm">Ver</a>
+                    {% if empresa.status == 'aguardando_aprovacao' %}
+                    <form action="{{ url_for('admin.aprovar_empresa', empresa_id=empresa.id) }}" method="POST" style="display: inline;">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="btn btn-secondary btn-sm">Aprovar</button>
+                    </form>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="card mt-2 text-center">
+        <p>Nenhuma empresa encontrada.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

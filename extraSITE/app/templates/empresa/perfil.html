@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}Perfil Empresa - ExtraSITE{% endblock %}
+
+{% block content %}
+<div class="container mt-3">
+    <h1>Perfil da Empresa</h1>
+    
+    <div class="card mt-2">
+        <div class="profile-header">
+            {% if current_user.logo %}
+            <img src="{{ url_for('static', filename='uploads/' + current_user.logo) }}" alt="Logo" class="profile-avatar">
+            {% endif %}
+            <div>
+                <h2>{{ current_user.nome_fantasia }}</h2>
+                <p>{{ current_user.razao_social }}</p>
+                <p>CNPJ: {{ current_user.cnpj }}</p>
+                
+                {% if current_user.status == 'ativo' %}
+                <span class="badge badge-success">Empresa aprovada</span>
+                {% elif current_user.status == 'aguardando_aprovacao' %}
+                <span class="badge badge-warning">Aguardando aprovação</span>
+                {% else %}
+                <span class="badge badge-danger">{{ current_user.status }}</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="card">
+        <h3>Editar informações</h3>
+        
+        <form method="POST">
+            {{ form.hidden_tag() }}
+            
+            <div class="form-group">
+                {{ form.nome_fantasia.label }}
+                {{ form.nome_fantasia(class="form-control") }}
+            </div>
+            
+            <div class="grid grid-2">
+                <div class="form-group">
+                    {{ form.telefone.label }}
+                    {{ form.telefone(class="form-control") }}
+                </div>
+                
+                <div class="form-group">
+                    {{ form.pessoa_contato.label }}
+                    {{ form.pessoa_contato(class="form-control") }}
+                </div>
+            </div>
+            
+            <div class="form-group">
+                {{ form.endereco_rua.label }}
+                {{ form.endereco_rua(class="form-control") }}
+            </div>
+            
+            <div class="grid grid-3">
+                <div class="form-group">
+                    {{ form.endereco_cidade.label }}
+                    {{ form.endereco_cidade(class="form-control") }}
+                </div>
+                
+                <div class="form-group">
+                    {{ form.endereco_estado.label }}
+                    {{ form.endereco_estado(class="form-control") }}
+                </div>
+                
+                <div class="form-group">
+                    {{ form.endereco_cep.label }}
+                    {{ form.endereco_cep(class="form-control") }}
+                </div>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">Salvar alterações</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

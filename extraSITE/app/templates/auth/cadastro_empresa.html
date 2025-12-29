@@ -1,0 +1,363 @@
+{% extends "base.html" %}
+
+{% block title %}Cadastro Empresa - {{ PLATFORM_NAME }}{% endblock %}
+
+{% block content %}
+<div class="wizard-container">
+    <!-- Progress Bar -->
+    <div class="wizard-progress">
+        <div class="wizard-progress-fill" id="progressFill" style="width: 0%;"></div>
+        <div class="wizard-step active" data-step="1">
+            <div class="wizard-step-number">1</div>
+            <span class="wizard-step-label">Empresa</span>
+        </div>
+        <div class="wizard-step" data-step="2">
+            <div class="wizard-step-number">2</div>
+            <span class="wizard-step-label">Contato</span>
+        </div>
+        <div class="wizard-step" data-step="3">
+            <div class="wizard-step-number">3</div>
+            <span class="wizard-step-label">Endereço</span>
+        </div>
+        <div class="wizard-step" data-step="4">
+            <div class="wizard-step-number">4</div>
+            <span class="wizard-step-label">Logo & Acesso</span>
+        </div>
+    </div>
+
+    <div class="wizard-card">
+        <!-- Incentive Badges -->
+        <div class="incentive-badges">
+            <span class="incentive-badge"><span class="incentive-badge-icon">👥</span> +500 Universitários</span>
+            <span class="incentive-badge"><span class="incentive-badge-icon">📄</span> Nota Fiscal Inclusa</span>
+            <span class="incentive-badge"><span class="incentive-badge-icon">🔄</span> Substituição Garantida</span>
+        </div>
+
+        <form method="POST" enctype="multipart/form-data" id="cadastroForm">
+            {{ form.hidden_tag() }}
+            
+            <!-- Step 1: Dados da Empresa -->
+            <div class="wizard-step-content active" data-step="1">
+                <h2>🏢 Dados da Empresa</h2>
+                <p class="subtitle">Informações básicas para identificação</p>
+                
+                <div class="form-group animate-in" style="animation-delay: 0.1s;">
+                    {{ form.razao_social.label }}
+                    {{ form.razao_social(class="form-control", placeholder="Razão Social conforme CNPJ") }}
+                    {% for error in form.razao_social.errors %}
+                        <small style="color: var(--danger);">{{ error }}</small>
+                    {% endfor %}
+                </div>
+                
+                <div class="form-group animate-in" style="animation-delay: 0.2s;">
+                    {{ form.nome_fantasia.label }}
+                    {{ form.nome_fantasia(class="form-control", placeholder="Nome que os clientes conhecem") }}
+                    {% for error in form.nome_fantasia.errors %}
+                        <small style="color: var(--danger);">{{ error }}</small>
+                    {% endfor %}
+                </div>
+                
+                <div class="form-group animate-in" style="animation-delay: 0.3s;">
+                    {{ form.cnpj.label }}
+                    {{ form.cnpj(class="form-control", placeholder="00.000.000/0000-00") }}
+                    {% for error in form.cnpj.errors %}
+                        <small style="color: var(--danger);">{{ error }}</small>
+                    {% endfor %}
+                </div>
+                
+                <div class="alert alert-info" style="margin-top: 20px;">
+                    <span style="font-size: 1.2rem;">ℹ️</span>
+                    Após o cadastro, sua empresa passará por uma breve análise antes de poder publicar trabalhos. 
+                    Isso garante a segurança de todos!
+                </div>
+                
+                <div class="wizard-nav">
+                    <button type="button" class="btn btn-primary btn-next">
+                        Continuar <span style="margin-left: 4px;">→</span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Step 2: Contato -->
+            <div class="wizard-step-content" data-step="2">
+                <h2>📞 Informações de Contato</h2>
+                <p class="subtitle">Como podemos entrar em contato com você</p>
+                
+                <div class="form-group animate-in">
+                    {{ form.email.label }}
+                    {{ form.email(class="form-control", placeholder="contato@suaempresa.com") }}
+                    <small style="color: var(--gray-500);">📧 Usado para login e notificações</small>
+                    {% for error in form.email.errors %}
+                        <br><small style="color: var(--danger);">{{ error }}</small>
+                    {% endfor %}
+                </div>
+                
+                <div class="form-group animate-in" style="animation-delay: 0.1s;">
+                    {{ form.telefone.label }}
+                    {{ form.telefone(class="form-control", placeholder="(45) 3333-3333") }}
+                    {% for error in form.telefone.errors %}
+                        <small style="color: var(--danger);">{{ error }}</small>
+                    {% endfor %}
+                </div>
+                
+                <div class="form-group animate-in" style="animation-delay: 0.2s;">
+                    {{ form.pessoa_contato.label }}
+                    {{ form.pessoa_contato(class="form-control", placeholder="Nome do responsável pelo RH/contratações") }}
+                    <small style="color: var(--gray-500);">👤 Quem vai gerenciar os trabalhos na plataforma</small>
+                    {% for error in form.pessoa_contato.errors %}
+                        <br><small style="color: var(--danger);">{{ error }}</small>
+                    {% endfor %}
+                </div>
+                
+                <div class="wizard-nav">
+                    <button type="button" class="btn btn-prev">← Voltar</button>
+                    <button type="button" class="btn btn-primary btn-next">Continuar →</button>
+                </div>
+            </div>
+            
+            <!-- Step 3: Endereço -->
+            <div class="wizard-step-content" data-step="3">
+                <h2>📍 Endereço da Empresa</h2>
+                <p class="subtitle">Onde os colaboradores irão trabalhar</p>
+                
+                <div class="form-group animate-in">
+                    {{ form.endereco_rua.label }}
+                    {{ form.endereco_rua(class="form-control", placeholder="Rua, número, complemento, bairro") }}
+                </div>
+                
+                <div class="grid grid-2">
+                    <div class="form-group animate-in" style="animation-delay: 0.1s;">
+                        {{ form.endereco_cidade.label }}
+                        {{ form.endereco_cidade(class="form-control", placeholder="Medianeira") }}
+                    </div>
+                    
+                    <div class="form-group animate-in" style="animation-delay: 0.2s;">
+                        {{ form.endereco_estado.label }}
+                        {{ form.endereco_estado(class="form-control", placeholder="PR") }}
+                    </div>
+                </div>
+                
+                <div class="form-group animate-in" style="animation-delay: 0.3s;">
+                    {{ form.endereco_cep.label }}
+                    {{ form.endereco_cep(class="form-control", placeholder="00000-000") }}
+                </div>
+                
+                <div style="background: var(--gray-100); border-radius: var(--radius); padding: 16px; margin-top: 16px;">
+                    <p style="font-size: 0.9rem; color: var(--gray-600); margin: 0;">
+                        💡 <strong>Dica:</strong> Você pode publicar trabalhos em endereços diferentes deste depois!
+                    </p>
+                </div>
+                
+                <div class="wizard-nav">
+                    <button type="button" class="btn btn-prev">← Voltar</button>
+                    <button type="button" class="btn btn-primary btn-next">Continuar →</button>
+                </div>
+            </div>
+            
+            <!-- Step 4: Logo e Senha -->
+            <div class="wizard-step-content" data-step="4">
+                <h2>🎨 Logo & Acesso</h2>
+                <p class="subtitle">Finalize seu cadastro com estilo!</p>
+                
+                <div class="upload-area" id="uploadArea">
+                    {{ form.logo(id="logoInput") }}
+                    
+                    <div class="upload-placeholder">
+                        <div class="upload-icon">🏢</div>
+                        <p class="upload-text">
+                            <strong>Clique aqui</strong> ou arraste o logo
+                        </p>
+                        <p class="upload-hint">PNG, JPG ou JPEG • Máx. 5MB • Opcional</p>
+                    </div>
+                    
+                    <div class="upload-preview">
+                        <img src="" alt="Preview" class="preview-image" id="previewImage" style="border-radius: var(--radius);">
+                        <div class="preview-info">
+                            <p class="preview-name" id="fileName"></p>
+                            <p class="preview-size" id="fileSize"></p>
+                            <p class="preview-change">Clique para trocar o logo</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="background: var(--gray-100); border-radius: var(--radius); padding: 16px; margin: 20px 0;">
+                    <p style="font-size: 0.9rem; color: var(--gray-600); margin: 0;">
+                        💡 Empresas com logo têm <strong>3x mais candidaturas</strong>! Mas você pode adicionar depois.
+                    </p>
+                </div>
+                
+                <div class="section-divider">
+                    <div class="section-divider-icon">🔐</div>
+                    <span class="section-divider-text">Crie sua senha</span>
+                    <div class="section-divider-line"></div>
+                </div>
+                
+                <div class="grid grid-2">
+                    <div class="form-group">
+                        {{ form.senha.label }}
+                        {{ form.senha(class="form-control", placeholder="Mínimo 6 caracteres") }}
+                        {% for error in form.senha.errors %}
+                            <small style="color: var(--danger);">{{ error }}</small>
+                        {% endfor %}
+                    </div>
+                    
+                    <div class="form-group">
+                        {{ form.confirmar_senha.label }}
+                        {{ form.confirmar_senha(class="form-control", placeholder="Repita a senha") }}
+                        {% for error in form.confirmar_senha.errors %}
+                            <small style="color: var(--danger);">{{ error }}</small>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <div style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(6, 182, 212, 0.1)); border-radius: var(--radius); padding: 20px; margin-top: 16px; text-align: center;">
+                    <p style="font-size: 1rem; color: var(--gray-700); margin: 0;">
+                        🎉 Após a aprovação, você poderá <strong>publicar trabalhos em minutos</strong> e encontrar universitários qualificados!
+                    </p>
+                </div>
+                
+                <div class="wizard-nav">
+                    <button type="button" class="btn btn-prev">← Voltar</button>
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        📤 Enviar para Análise
+                    </button>
+                </div>
+            </div>
+        </form>
+        
+        <div class="auth-footer" style="margin-top: 32px; text-align: center;">
+            <p>Já tem conta? <a href="{{ url_for('auth.login') }}">Fazer login</a></p>
+            <p class="mt-1"><a href="{{ url_for('auth.cadastro_colaborador') }}" style="color: var(--gray-500);">🎓 Sou universitário</a></p>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('cadastroForm');
+    const steps = document.querySelectorAll('.wizard-step-content');
+    const progressSteps = document.querySelectorAll('.wizard-progress .wizard-step');
+    const progressFill = document.getElementById('progressFill');
+    let currentStep = 1;
+    const totalSteps = steps.length;
+
+    // Update progress bar
+    function updateProgress() {
+        const progress = ((currentStep - 1) / (totalSteps - 1)) * 100;
+        progressFill.style.width = progress + '%';
+        
+        progressSteps.forEach((step, index) => {
+            const stepNum = index + 1;
+            step.classList.remove('active', 'completed');
+            if (stepNum < currentStep) {
+                step.classList.add('completed');
+            } else if (stepNum === currentStep) {
+                step.classList.add('active');
+            }
+        });
+    }
+
+    // Show specific step
+    function showStep(stepNum) {
+        steps.forEach(step => {
+            step.classList.remove('active');
+            if (parseInt(step.dataset.step) === stepNum) {
+                step.classList.add('active');
+            }
+        });
+        currentStep = stepNum;
+        updateProgress();
+        
+        // Scroll to top of wizard
+        document.querySelector('.wizard-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    // Next button handlers
+    document.querySelectorAll('.btn-next').forEach(btn => {
+        btn.addEventListener('click', () => {
+            if (currentStep < totalSteps) {
+                showStep(currentStep + 1);
+            }
+        });
+    });
+
+    // Previous button handlers
+    document.querySelectorAll('.btn-prev').forEach(btn => {
+        btn.addEventListener('click', () => {
+            if (currentStep > 1) {
+                showStep(currentStep - 1);
+            }
+        });
+    });
+
+    // File Upload Preview
+    const uploadArea = document.getElementById('uploadArea');
+    const logoInput = document.getElementById('logoInput');
+    const previewImage = document.getElementById('previewImage');
+    const fileName = document.getElementById('fileName');
+    const fileSize = document.getElementById('fileSize');
+
+    // Drag and drop
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        uploadArea.addEventListener(eventName, preventDefaults, false);
+    });
+
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    ['dragenter', 'dragover'].forEach(eventName => {
+        uploadArea.addEventListener(eventName, () => {
+            uploadArea.classList.add('drag-over');
+        });
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+        uploadArea.addEventListener(eventName, () => {
+            uploadArea.classList.remove('drag-over');
+        });
+    });
+
+    uploadArea.addEventListener('drop', (e) => {
+        const files = e.dataTransfer.files;
+        if (files.length) {
+            logoInput.files = files;
+            handleFile(files[0]);
+        }
+    });
+
+    logoInput.addEventListener('change', (e) => {
+        if (e.target.files.length) {
+            handleFile(e.target.files[0]);
+        }
+    });
+
+    function handleFile(file) {
+        if (file && file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                previewImage.src = e.target.result;
+                fileName.textContent = file.name;
+                fileSize.textContent = formatFileSize(file.size);
+                uploadArea.classList.add('has-file', 'upload-success-animation');
+                
+                setTimeout(() => {
+                    uploadArea.classList.remove('upload-success-animation');
+                }, 500);
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    function formatFileSize(bytes) {
+        if (bytes < 1024) return bytes + ' bytes';
+        if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+        return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+    }
+
+    // Initialize
+    updateProgress();
+});
+</script>
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Login - ExtraSITE{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card">
+        <h2>Bem-vindo de volta</h2>
+        <p class="subtitle">Entre na sua conta para continuar</p>
+        
+        <form method="POST">
+            {{ form.hidden_tag() }}
+            
+            <div class="form-group">
+                {{ form.email.label }}
+                {{ form.email(class="form-control", placeholder="seu@email.com") }}
+                {% for error in form.email.errors %}
+                    <small style="color: var(--danger);">{{ error }}</small>
+                {% endfor %}
+            </div>
+            
+            <div class="form-group">
+                {{ form.senha.label }}
+                {{ form.senha(class="form-control", placeholder="••••••••") }}
+                {% for error in form.senha.errors %}
+                    <small style="color: var(--danger);">{{ error }}</small>
+                {% endfor %}
+            </div>
+            
+            <button type="submit" class="btn btn-primary w-full">Entrar</button>
+        </form>
+        
+        <div class="auth-divider">ou</div>
+        
+        <div class="auth-footer">
+            <p>Não tem conta? <a href="{{ url_for('auth.cadastro_colaborador') }}">Cadastre-se como universitário</a></p>
+            <p class="mt-1"><a href="{{ url_for('auth.cadastro_empresa') }}" style="color: var(--gray-500);">Quero cadastrar minha empresa</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}

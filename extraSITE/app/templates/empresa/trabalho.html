@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block title %}{{ trabalho.titulo }} - ExtraSITE{% endblock %}
+
+{% block content %}
+<div class="container mt-3">
+    <a href="{{ url_for('empresa.dashboard') }}">&larr; Voltar ao dashboard</a>
+    
+    <div class="card mt-2">
+        {% if trabalho.status == 'aberto' %}
+        <span class="badge badge-success">Aberto</span>
+        {% elif trabalho.status == 'em_andamento' %}
+        <span class="badge badge-warning">Em andamento</span>
+        {% elif trabalho.status == 'concluido' %}
+        <span class="badge badge-info">Concluído</span>
+        {% elif trabalho.status == 'cancelado' %}
+        <span class="badge badge-danger">Cancelado</span>
+        {% endif %}
+        
+        <h1 class="mt-1">{{ trabalho.titulo }}</h1>
+        
+        <div class="grid grid-2 mt-2">
+            <div>
+                <p><strong>📅 Data:</strong> {{ trabalho.data.strftime('%d/%m/%Y') }}</p>
+                <p><strong>🕐 Horário:</strong> {{ trabalho.horario_inicio.strftime('%H:%M') }} às {{ trabalho.horario_fim.strftime('%H:%M') }}</p>
+                <p><strong>📍 Local:</strong> {{ trabalho.local_endereco }}, {{ trabalho.local_cidade }}</p>
+            </div>
+            <div>
+                <p><strong>💰 Valor:</strong> R$ {{ "%.2f"|format(trabalho.valor_pagamento) }} por pessoa</p>
+                <p><strong>👥 Vagas:</strong> {{ trabalho.vagas_preenchidas }}/{{ trabalho.vagas_total }}</p>
+                <p><strong>💵 Total:</strong> R$ {{ "%.2f"|format(trabalho.valor_total) }}</p>
+            </div>
+        </div>
+        
+        {% if trabalho.status == 'aberto' and trabalho.vagas_preenchidas == trabalho.vagas_total %}
+        <div class="alert alert-success mt-2">
+            Todas as vagas foram preenchidas!
+        </div>
+        {% endif %}
+        
+        {% if trabalho.status in ['em_andamento', 'aberto'] %}
+        <form action="{{ url_for('empresa.concluir_trabalho', trabalho_id=trabalho.id) }}" method="POST" class="mt-2">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="btn btn-secondary" onclick="return confirm('Marcar trabalho como concluído?')">
+                ✅ Concluir trabalho
+            </button>
+        </form>
+        {% endif %}
+    </div>
+    
+    <!-- Candidaturas -->
+    <h2 class="mt-3 mb-2">Candidaturas ({{ candidaturas|length }})</h2>
+    
+    {% if candidaturas %}
+    <div class="grid grid-2">
+        {% for candidatura in candidaturas %}
+        <div class="card">
+            <div class="profile-header">
+                <img src="{{ url_for('static', filename='uploads/' + candidatura.colaborador.foto_perfil) }}" alt="Foto" class="profile-avatar" style="width: 60px; height: 60px;">
+                <div>
+                    <h3>{{ candidatura.colaborador.nome }}</h3>
+                    <p>{{ candidatura.colaborador.universidade }}</p>
+                    <p>⭐ {{ candidatura.colaborador.avaliacao_media or 'Novo' }} | 📞 {{ candidatura.colaborador.telefone }}</p>
+                </div>
+            </div>
+            
+            {% if candidatura.mensagem %}
+            <p class="mt-1"><em>"{{ candidatura.mensagem }}"</em></p>
+            {% endif %}
+            
+            {% if candidatura.colaborador.habilidades %}
+            <p class="mt-1"><small><strong>Habilidades:</strong> {{ candidatura.colaborador.habilidades[:100] }}...</small></p>
+            {% endif %}
+            
+            <div class="mt-2">
+                {% if candidatura.status == 'pendente' %}
+                <span class="badge badge-warning">Pendente</span>
+                <div class="flex gap-1 mt-1">
+                    <form action="{{ url_for('empresa.aceitar_candidatura', trabalho_id=trabalho.id, candidatura_id=candidatura.id) }}" method="POST" style="display: inline;">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="btn btn-secondary btn-sm">✅ Aceitar</button>
+                    </form>
+                    <form action="{{ url_for('empresa.recusar_candidatura', trabalho_id=trabalho.id, candidatura_id=candidatura.id) }}" method="POST" style="display: inline;">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="btn btn-danger btn-sm">❌ Recusar</button>
+                    </form>
+                </div>
+                
+                {% elif candidatura.status == 'aceita' %}
+                <span class="badge badge-success">Aceito</span>
+                
+                {% if not candidatura.confirmado_empresa %}
+                <div class="flex gap-1 mt-1">
+                    <form action="{{ url_for('empresa.confirmar_execucao', trabalho_id=trabalho.id, candidatura_id=candidatura.id) }}" method="POST" style="display: inline;">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="btn btn-secondary btn-sm">✅ Confirmar presença</button>
+                    </form>
+                    <form action="{{ url_for('empresa.marcar_nao_compareceu', trabalho_id=trabalho.id, candidatura_id=candidatura.id) }}" method="POST" style="display: inline;">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="btn btn-danger btn-sm">❌ Não compareceu</button>
+                    </form>
+                </div>
+                {% else %}
+                    {% if candidatura.compareceu %}
+                    <p class="mt-1">✅ Presença confirmada</p>
+                    {% else %}
+                    <p class="mt-1">❌ Não compareceu</p>
+                    {% endif %}
+                {% endif %}
+                
+                {% elif candidatura.status == 'recusada' %}
+                <span class="badge badge-danger">Recusado</span>
+                
+                {% elif candidatura.status == 'cancelada' %}
+                <span class="badge">Cancelado pelo colaborador</span>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="card text-center">
+        <p>Ainda não há candidaturas para este trabalho.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

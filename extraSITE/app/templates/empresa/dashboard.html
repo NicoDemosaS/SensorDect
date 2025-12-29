@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard Empresa - ExtraSITE{% endblock %}
+
+{% block content %}
+<div class="container mt-3">
+    <div class="dashboard-header">
+        <div class="page-header-actions">
+            <div>
+                <h1>{{ current_user.nome_fantasia }}</h1>
+                <p>Gerencie seus trabalhos e candidatos</p>
+            </div>
+            {% if current_user.pode_publicar %}
+            <a href="{{ url_for('empresa.novo_trabalho') }}" class="btn btn-primary">+ Publicar trabalho</a>
+            {% endif %}
+        </div>
+    </div>
+    
+    {% if current_user.status == 'aguardando_aprovacao' %}
+    <div class="alert alert-warning">
+        ⏳ <strong>Aguardando aprovação:</strong> Sua empresa está em análise. Você poderá publicar trabalhos após a aprovação pelo administrador.
+    </div>
+    {% endif %}
+    
+    <!-- Stats -->
+    <div class="dashboard-grid">
+        <div class="dashboard-card">
+            <div class="dashboard-card-header">
+                <div>
+                    <h3>{{ trabalhos_abertos }}</h3>
+                    <p>Trabalhos abertos</p>
+                </div>
+                <div class="dashboard-card-icon green">📋</div>
+            </div>
+        </div>
+        <div class="dashboard-card">
+            <div class="dashboard-card-header">
+                <div>
+                    <h3>{{ trabalhos_concluidos }}</h3>
+                    <p>Trabalhos concluídos</p>
+                </div>
+                <div class="dashboard-card-icon blue">✓</div>
+            </div>
+        </div>
+        <div class="dashboard-card">
+            <div class="dashboard-card-header">
+                <div>
+                    <h3>{{ trabalhos|length }}</h3>
+                    <p>Total de trabalhos</p>
+                </div>
+                <div class="dashboard-card-icon purple">📊</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Trabalhos recentes -->
+    <div class="page-header" style="border-bottom: none; margin-top: 32px;">
+        <div class="page-header-actions">
+            <h2>📋 Trabalhos recentes</h2>
+            {% if trabalhos %}
+            <a href="{{ url_for('empresa.meus_trabalhos') }}" class="btn btn-outline btn-sm">Ver todos</a>
+            {% endif %}
+        </div>
+    </div>
+    
+    {% if trabalhos %}
+    <div class="grid grid-2">
+        {% for trabalho in trabalhos %}
+        <div class="trabalho-card">
+            <div class="card-header">
+                {% if trabalho.status == 'aberto' %}
+                <span class="badge badge-success"><span class="status-dot active"></span>Aberto</span>
+                {% elif trabalho.status == 'em_andamento' %}
+                <span class="badge badge-warning"><span class="status-dot pending"></span>Em andamento</span>
+                {% elif trabalho.status == 'concluido' %}
+                <span class="badge badge-info">✓ Concluído</span>
+                {% else %}
+                <span class="badge badge-gray">{{ trabalho.status }}</span>
+                {% endif %}
+                <span class="valor">R$ {{ "%.2f"|format(trabalho.valor_pagamento) }}</span>
+            </div>
+            
+            <h3 class="card-title">{{ trabalho.titulo }}</h3>
+            
+            <div class="meta">
+                <span>📅 {{ trabalho.data.strftime('%d/%m/%Y') }}</span>
+                <span>👥 {{ trabalho.vagas_preenchidas }}/{{ trabalho.vagas_total }} vagas</span>
+                <span>📨 {{ trabalho.candidaturas.count() }} candidatura(s)</span>
+            </div>
+            
+            <div class="actions">
+                <a href="{{ url_for('empresa.ver_trabalho', trabalho_id=trabalho.id) }}" class="btn btn-primary btn-sm">Gerenciar</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-state-icon">📝</div>
+        <h3>Nenhum trabalho publicado</h3>
+        <p>Publique seu primeiro trabalho e comece a receber candidaturas de universitários qualificados.</p>
+        {% if current_user.pode_publicar %}
+        <a href="{{ url_for('empresa.novo_trabalho') }}" class="btn btn-primary">Publicar primeiro trabalho</a>
+        {% else %}
+        <p style="color: var(--warning); margin-top: 16px;">Aguarde a aprovação da sua empresa para publicar.</p>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

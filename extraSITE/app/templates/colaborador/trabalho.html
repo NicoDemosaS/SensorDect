@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block title %}{{ trabalho.titulo }} - ExtraSITE{% endblock %}
+
+{% block content %}
+<div class="container mt-3" style="max-width: 900px;">
+    <a href="{{ url_for('colaborador.mural') }}" class="btn btn-ghost btn-sm" style="margin-bottom: 16px;">← Voltar ao mural</a>
+    
+    <div class="card" style="padding: 32px;">
+        <div class="flex justify-between items-center" style="flex-wrap: wrap; gap: 16px;">
+            <span class="badge badge-info">{{ trabalho.categoria_display }}</span>
+            <div class="valor" style="font-size: 2rem;">R$ {{ "%.2f"|format(trabalho.valor_liquido) }}</div>
+        </div>
+        
+        <h1 style="font-size: 1.75rem; margin-top: 16px;">{{ trabalho.titulo }}</h1>
+        
+        <div class="profile-header mt-2" style="padding: 16px; background: var(--gray-100); border-radius: var(--radius);">
+            {% if trabalho.empresa.logo %}
+            <img src="{{ url_for('static', filename='uploads/' + trabalho.empresa.logo) }}" alt="Logo" class="profile-avatar" style="width: 60px; height: 60px;">
+            {% else %}
+            <div style="width: 60px; height: 60px; background: var(--gradient); border-radius: var(--radius); display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; font-weight: 700;">{{ trabalho.empresa.nome_fantasia[0] }}</div>
+            {% endif %}
+            <div>
+                <h3 style="font-size: 1.1rem; margin-bottom: 4px;">{{ trabalho.empresa.nome_fantasia }}</h3>
+                <p style="color: var(--gray-500); font-size: 0.9rem;">⭐ {{ trabalho.empresa.avaliacao_media or 'Sem avaliações ainda' }}</p>
+            </div>
+        </div>
+        
+        <div class="divider"></div>
+        
+        <div class="grid grid-2" style="gap: 32px;">
+            <div>
+                <h3 style="font-size: 1rem; color: var(--gray-700); margin-bottom: 16px;">📋 Detalhes do trabalho</h3>
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                    <p><strong style="color: var(--gray-600);">📅 Data:</strong> {{ trabalho.data.strftime('%d/%m/%Y') }}</p>
+                    <p><strong style="color: var(--gray-600);">🕐 Horário:</strong> {{ trabalho.horario_inicio.strftime('%H:%M') }} às {{ trabalho.horario_fim.strftime('%H:%M') }}</p>
+                    <p><strong style="color: var(--gray-600);">⏱️ Duração:</strong> {{ "%.1f"|format(trabalho.duracao_horas) }} horas</p>
+                    <p><strong style="color: var(--gray-600);">📍 Local:</strong> {{ trabalho.local_endereco }}, {{ trabalho.local_cidade }}</p>
+                    <p><strong style="color: var(--gray-600);">👥 Vagas:</strong> <span class="badge badge-success">{{ trabalho.vagas_disponiveis }} de {{ trabalho.vagas_total }}</span></p>
+                </div>
+            </div>
+            
+            <div>
+                <h3 style="font-size: 1rem; color: var(--gray-700); margin-bottom: 16px;">💰 Pagamento</h3>
+                <div style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(16, 185, 129, 0.05) 100%); border-radius: var(--radius); padding: 24px; text-align: center;">
+                    <div class="valor" style="font-size: 2.5rem;">R$ {{ "%.2f"|format(trabalho.valor_liquido) }}</div>
+                    <p style="color: var(--gray-500); margin-top: 8px;">Valor por pessoa</p>
+                    {% if trabalho.valor_sugerido %}
+                    <p style="font-size: 0.85rem; color: var(--gray-400); margin-top: 4px;">Valor sugerido: R$ {{ "%.2f"|format(trabalho.valor_sugerido) }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="divider"></div>
+        
+        <h3 style="font-size: 1rem; color: var(--gray-700); margin-bottom: 12px;">📝 Descrição</h3>
+        <p style="line-height: 1.8; color: var(--gray-600);">{{ trabalho.descricao }}</p>
+        
+        {% if trabalho.requisitos %}
+        <h3 style="font-size: 1rem; color: var(--gray-700); margin: 24px 0 12px;">✅ Requisitos</h3>
+        <p style="line-height: 1.8; color: var(--gray-600);">{{ trabalho.requisitos }}</p>
+        {% endif %}
+    </div>
+    
+    <!-- Candidatura -->
+    <div class="card" style="padding: 32px; margin-top: 24px;">
+        {% if candidatura %}
+            {% if candidatura.status == 'pendente' %}
+            <div class="alert alert-warning" style="margin-bottom: 20px;">
+                ⏳ <strong>Candidatura enviada!</strong> Aguarde a resposta da empresa.
+            </div>
+            <form action="{{ url_for('colaborador.cancelar_candidatura', candidatura_id=candidatura.id) }}" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="btn btn-outline" onclick="return confirm('Tem certeza que deseja cancelar sua candidatura?')">Cancelar candidatura</button>
+            </form>
+            
+            {% elif candidatura.status == 'aceita' %}
+            <div class="alert alert-success">
+                🎉 <strong>Parabéns!</strong> Sua candidatura foi aceita! Compareça no local e horário indicados.
+            </div>
+            
+            {% elif candidatura.status == 'recusada' %}
+            <div class="alert alert-danger">
+                Sua candidatura foi recusada pela empresa.
+            </div>
+            
+            {% elif candidatura.status == 'cancelada' %}
+            <div class="alert alert-info">
+                Esta candidatura foi cancelada.
+            </div>
+            {% endif %}
+        
+        {% elif trabalho.esta_aberto %}
+            <h3 style="font-size: 1.25rem; margin-bottom: 20px;">🚀 Candidate-se agora</h3>
+            <form action="{{ url_for('colaborador.candidatar', trabalho_id=trabalho.id) }}" method="POST">
+                {{ form.hidden_tag() }}
+                
+                <div class="form-group">
+                    {{ form.mensagem.label }}
+                    {{ form.mensagem(class="form-control", placeholder="Opcional: conte por que você é ideal para este trabalho, sua experiência...") }}
+                    <small style="color: var(--gray-500);">Uma boa mensagem pode aumentar suas chances!</small>
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-lg">Enviar candidatura</button>
+            </form>
+        
+        {% else %}
+            <div class="alert alert-warning">
+                ⚠️ Este trabalho não está mais aceitando candidaturas.
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

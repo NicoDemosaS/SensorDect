@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}Política de Cancelamento - {{ PLATFORM_NAME }}{% endblock %}
+
+{% block content %}
+<div class="container mt-3">
+    <div class="page-header" style="justify-content: center; text-align: center;">
+        <div>
+            <h1>❌ Política de Cancelamento</h1>
+            <p style="color: var(--gray-500); margin-top: 8px;">Regras para cancelamento de trabalhos na plataforma</p>
+        </div>
+    </div>
+    
+    {% if POLITICA_CANCELAMENTO %}
+        <div class="policy-content">
+            {{ POLITICA_CANCELAMENTO | safe }}
+        </div>
+    {% else %}
+    <div class="card">
+            <div class="text-center" style="padding: 60px 20px;">
+                <div style="font-size: 4rem; margin-bottom: 16px;">⏰</div>
+                <h3>Política em elaboração</h3>
+                <p style="color: var(--gray-500); margin-top: 8px;">
+                    A política de cancelamento está sendo preparada e será disponibilizada em breve.
+                </p>
+                
+                <div class="alert alert-info mt-3" style="text-align: left; max-width: 500px; margin: 24px auto 0;">
+                    <strong>Informação preliminar:</strong><br>
+                    Janela de cancelamento atual: <strong>{{ CANCELLATION_WINDOW_HOURS }} horas</strong> antes do trabalho.
+                </div>
+            </div>
+    </div>
+    {% endif %}
+    
+    <!-- Botão Voltar -->
+    <div class="text-center mt-3">
+        <a href="{{ url_for('main.index') }}" class="btn btn-outline">← Voltar para Início</a>
+    </div>
+    
+    <!-- Links para outras políticas -->
+    <div class="grid grid-3 mt-3">
+        <a href="{{ url_for('main.termos') }}" class="card text-center" style="text-decoration: none; padding: 24px; transition: var(--transition);">
+            <div style="font-size: 2rem;">📄</div>
+            <p style="margin-top: 8px; color: var(--gray-600); font-weight: 500;">Termos de Uso</p>
+        </a>
+        <a href="{{ url_for('main.privacidade') }}" class="card text-center" style="text-decoration: none; padding: 24px; transition: var(--transition);">
+            <div style="font-size: 2rem;">🔒</div>
+            <p style="margin-top: 8px; color: var(--gray-600); font-weight: 500;">Política de Privacidade</p>
+        </a>
+        <a href="{{ url_for('main.sobre') }}" class="card text-center" style="text-decoration: none; padding: 24px; transition: var(--transition);">
+            <div style="font-size: 2rem;">ℹ️</div>
+            <p style="margin-top: 8px; color: var(--gray-600); font-weight: 500;">Sobre a Plataforma</p>
+        </a>
+    </div>
+</div>
+{% endblock %}

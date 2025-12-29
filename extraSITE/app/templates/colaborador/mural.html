@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}Oportunidades - ExtraSITE{% endblock %}
+
+{% block content %}
+<div class="container mt-3">
+    <div class="page-header">
+        <h1>🔍 Encontre oportunidades</h1>
+        <p>Trabalhos disponíveis na sua região</p>
+    </div>
+    
+    <!-- Filtros -->
+    <div class="filter-bar">
+        <form method="GET" class="filter-row">
+            <div class="form-group">
+                <label>Categoria</label>
+                <select name="categoria" class="form-control">
+                    <option value="">Todas as categorias</option>
+                    {% for key, value in categorias.items() %}
+                    <option value="{{ key }}" {% if filtro_categoria == key %}selected{% endif %}>{{ value }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>Cidade</label>
+                <input type="text" name="cidade" class="form-control" placeholder="Ex: Medianeira" value="{{ filtro_cidade }}">
+            </div>
+            
+            <div class="form-group" style="display: flex; gap: 8px; align-items: flex-end;">
+                <button type="submit" class="btn btn-primary">Filtrar</button>
+                <a href="{{ url_for('colaborador.mural') }}" class="btn btn-ghost">Limpar</a>
+            </div>
+        </form>
+    </div>
+    
+    <!-- Lista de trabalhos -->
+    {% if trabalhos %}
+    <div class="grid grid-2">
+        {% for trabalho in trabalhos %}
+        <div class="trabalho-card">
+            <div class="card-header">
+                <div class="flex gap-1">
+                    <span class="badge badge-info">{{ trabalho.categoria_display }}</span>
+                    {% if trabalho.id in candidaturas_ids %}
+                    <span class="badge badge-warning">Candidatou-se</span>
+                    {% endif %}
+                </div>
+                <span class="valor">R$ {{ "%.2f"|format(trabalho.valor_liquido) }}</span>
+            </div>
+            
+            <h3 class="card-title">{{ trabalho.titulo }}</h3>
+            <p style="color: var(--primary); font-weight: 500;">{{ trabalho.empresa.nome_fantasia }}</p>
+            
+            <div class="meta">
+                <span>📅 {{ trabalho.data.strftime('%d/%m/%Y') }}</span>
+                <span>🕐 {{ trabalho.horario_inicio.strftime('%H:%M') }} - {{ trabalho.horario_fim.strftime('%H:%M') }}</span>
+            </div>
+            <div class="meta">
+                <span>📍 {{ trabalho.local_cidade }}</span>
+                <span><span class="status-dot active"></span>{{ trabalho.vagas_disponiveis }} vaga(s)</span>
+            </div>
+            
+            <p class="descricao">{{ trabalho.descricao[:80] }}{% if trabalho.descricao|length > 80 %}...{% endif %}</p>
+            
+            <div class="actions">
+                <a href="{{ url_for('colaborador.ver_trabalho', trabalho_id=trabalho.id) }}" class="btn btn-primary btn-sm w-full">Ver detalhes</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-state-icon">🔍</div>
+        <h3>Nenhum trabalho encontrado</h3>
+        <p>Tente ajustar os filtros ou volte mais tarde para ver novas oportunidades.</p>
+        <a href="{{ url_for('colaborador.mural') }}" class="btn btn-outline">Limpar filtros</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

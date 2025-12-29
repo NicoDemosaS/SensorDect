@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}Trabalhos - Admin{% endblock %}
+
+{% block content %}
+<div class="container mt-3">
+    <h1>Trabalhos</h1>
+    
+    <!-- Filtros -->
+    <div class="flex gap-1 mt-2">
+        <a href="{{ url_for('admin.listar_trabalhos') }}" class="btn {% if not filtro %}btn-primary{% else %}btn-outline{% endif %} btn-sm">Todos</a>
+        <a href="{{ url_for('admin.listar_trabalhos', status='aberto') }}" class="btn {% if filtro == 'aberto' %}btn-primary{% else %}btn-outline{% endif %} btn-sm">Abertos</a>
+        <a href="{{ url_for('admin.listar_trabalhos', status='concluido') }}" class="btn {% if filtro == 'concluido' %}btn-primary{% else %}btn-outline{% endif %} btn-sm">Concluídos</a>
+        <a href="{{ url_for('admin.listar_trabalhos', status='cancelado') }}" class="btn {% if filtro == 'cancelado' %}btn-primary{% else %}btn-outline{% endif %} btn-sm">Cancelados</a>
+    </div>
+    
+    {% if trabalhos %}
+    <table class="table mt-2">
+        <thead>
+            <tr>
+                <th>Título</th>
+                <th>Empresa</th>
+                <th>Data</th>
+                <th>Vagas</th>
+                <th>Valor</th>
+                <th>Status</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for trabalho in trabalhos %}
+            <tr>
+                <td>{{ trabalho.titulo }}</td>
+                <td>{{ trabalho.empresa.nome_fantasia }}</td>
+                <td>{{ trabalho.data.strftime('%d/%m/%Y') }}</td>
+                <td>{{ trabalho.vagas_preenchidas }}/{{ trabalho.vagas_total }}</td>
+                <td>R$ {{ "%.2f"|format(trabalho.valor_pagamento) }}</td>
+                <td>
+                    {% if trabalho.status == 'aberto' %}
+                    <span class="badge badge-success">Aberto</span>
+                    {% elif trabalho.status == 'concluido' %}
+                    <span class="badge badge-info">Concluído</span>
+                    {% elif trabalho.status == 'cancelado' %}
+                    <span class="badge badge-danger">Cancelado</span>
+                    {% else %}
+                    <span class="badge">{{ trabalho.status }}</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if trabalho.status == 'aberto' %}
+                    <form action="{{ url_for('admin.cancelar_trabalho', trabalho_id=trabalho.id) }}" method="POST" style="display: inline;">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Cancelar este trabalho?')">Cancelar</button>
+                    </form>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="card mt-2 text-center">
+        <p>Nenhum trabalho encontrado.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

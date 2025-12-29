@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block title %}Painel Admin - ExtraSITE{% endblock %}
+
+{% block content %}
+<div class="container mt-3">
+    <div class="dashboard-header">
+        <h1>📊 Painel Administrativo</h1>
+        <p>Visão geral da plataforma</p>
+    </div>
+    
+    <!-- Stats -->
+    <div class="dashboard-grid" style="grid-template-columns: repeat(5, 1fr);">
+        <div class="dashboard-card">
+            <div class="dashboard-card-header">
+                <div>
+                    <h3 style="color: var(--warning);">{{ empresas_pendentes }}</h3>
+                    <p>Pendentes</p>
+                </div>
+                <div class="dashboard-card-icon orange">⏳</div>
+            </div>
+        </div>
+        <div class="dashboard-card">
+            <div class="dashboard-card-header">
+                <div>
+                    <h3>{{ empresas_ativas }}</h3>
+                    <p>Empresas ativas</p>
+                </div>
+                <div class="dashboard-card-icon green">🏢</div>
+            </div>
+        </div>
+        <div class="dashboard-card">
+            <div class="dashboard-card-header">
+                <div>
+                    <h3>{{ total_colaboradores }}</h3>
+                    <p>Colaboradores</p>
+                </div>
+                <div class="dashboard-card-icon blue">👥</div>
+            </div>
+        </div>
+        <div class="dashboard-card">
+            <div class="dashboard-card-header">
+                <div>
+                    <h3>{{ total_trabalhos }}</h3>
+                    <p>Total trabalhos</p>
+                </div>
+                <div class="dashboard-card-icon purple">📋</div>
+            </div>
+        </div>
+        <div class="dashboard-card">
+            <div class="dashboard-card-header">
+                <div>
+                    <h3 style="color: var(--success);">{{ trabalhos_abertos }}</h3>
+                    <p>Abertos agora</p>
+                </div>
+                <div class="dashboard-card-icon green">✓</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Links rápidos -->
+    <div class="quick-links mt-3">
+        <a href="{{ url_for('admin.listar_empresas') }}" class="quick-link">🏢 Empresas</a>
+        <a href="{{ url_for('admin.listar_colaboradores') }}" class="quick-link">👥 Colaboradores</a>
+        <a href="{{ url_for('admin.listar_trabalhos') }}" class="quick-link">📋 Trabalhos</a>
+        <a href="{{ url_for('admin.listar_empresas', status='aguardando_aprovacao') }}" class="quick-link" style="border-color: var(--warning); color: var(--warning);">⏳ Pendentes ({{ empresas_pendentes }})</a>
+        <a href="{{ url_for('admin.configuracoes') }}" class="quick-link" style="border-color: var(--gray-400); color: var(--gray-600);">⚙️ Configurações</a>
+    </div>
+    
+    <!-- Empresas pendentes -->
+    {% if pendentes %}
+    <div class="page-header" style="margin-top: 40px; border-bottom: none;">
+        <h2>⏳ Empresas aguardando aprovação</h2>
+    </div>
+    <div class="grid grid-2">
+        {% for empresa in pendentes %}
+        <div class="card">
+            <div class="flex justify-between items-center" style="margin-bottom: 12px;">
+                <span class="badge badge-warning">Aguardando análise</span>
+                <small style="color: var(--gray-500);">{{ empresa.criado_em.strftime('%d/%m/%Y') }}</small>
+            </div>
+            <h3 class="card-title">{{ empresa.nome_fantasia }}</h3>
+            <p style="color: var(--gray-500); font-size: 0.9rem;">{{ empresa.razao_social }}</p>
+            
+            <div class="divider" style="margin: 16px 0;"></div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 0.9rem;">
+                <p><strong style="color: var(--gray-600);">CNPJ:</strong> {{ empresa.cnpj }}</p>
+                <p><strong style="color: var(--gray-600);">Contato:</strong> {{ empresa.pessoa_contato }}</p>
+                <p><strong style="color: var(--gray-600);">Email:</strong> {{ empresa.email }}</p>
+                <p><strong style="color: var(--gray-600);">Cidade:</strong> {{ empresa.endereco_cidade }}</p>
+            </div>
+            
+            <div class="flex gap-1 mt-3">
+                <a href="{{ url_for('admin.ver_empresa', empresa_id=empresa.id) }}" class="btn btn-outline btn-sm">Ver detalhes</a>
+                <form action="{{ url_for('admin.aprovar_empresa', empresa_id=empresa.id) }}" method="POST" style="display: inline;">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="btn btn-secondary btn-sm">✅ Aprovar</button>
+                </form>
+                <form action="{{ url_for('admin.rejeitar_empresa', empresa_id=empresa.id) }}" method="POST" style="display: inline;">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Rejeitar esta empresa?')">✕ Rejeitar</button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="card text-center mt-3" style="padding: 40px;">
+        <div style="font-size: 3rem; margin-bottom: 16px;">✅</div>
+        <h3>Tudo em dia!</h3>
+        <p style="color: var(--gray-500);">Não há empresas aguardando aprovação.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

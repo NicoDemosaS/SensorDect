@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - ExtraSITE{% endblock %}
+
+{% block content %}
+<div class="container mt-3">
+    <div class="dashboard-header">
+        <h1>Olá, {{ current_user.nome.split()[0] }}! 👋</h1>
+        <p>Confira suas candidaturas e próximos trabalhos</p>
+    </div>
+    
+    <!-- Dashboard Cards -->
+    <div class="dashboard-grid">
+        <div class="dashboard-card">
+            <div class="dashboard-card-header">
+                <div>
+                    <h3>{{ aceitas|length }}</h3>
+                    <p>Trabalhos confirmados</p>
+                </div>
+                <div class="dashboard-card-icon green">✓</div>
+            </div>
+        </div>
+        <div class="dashboard-card">
+            <div class="dashboard-card-header">
+                <div>
+                    <h3>{{ pendentes|length }}</h3>
+                    <p>Candidaturas pendentes</p>
+                </div>
+                <div class="dashboard-card-icon orange">⏳</div>
+            </div>
+        </div>
+        <div class="dashboard-card">
+            <div class="dashboard-card-header">
+                <div>
+                    <a href="{{ url_for('colaborador.mural') }}" class="btn btn-primary btn-sm">Ver oportunidades</a>
+                </div>
+                <div class="dashboard-card-icon purple">🔍</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Próximos trabalhos aceitos -->
+    <div class="page-header" style="border-bottom: none; margin-top: 32px;">
+        <h2>📋 Seus próximos trabalhos</h2>
+    </div>
+    
+    {% if aceitas %}
+    <div class="grid grid-2">
+        {% for candidatura in aceitas %}
+        <div class="trabalho-card">
+            <div class="card-header">
+                <span class="badge badge-success">✓ Confirmado</span>
+                <span class="valor">R$ {{ "%.2f"|format(candidatura.trabalho.valor_liquido) }}</span>
+            </div>
+            <h3 class="card-title">{{ candidatura.trabalho.titulo }}</h3>
+            <p style="color: var(--primary); font-weight: 600; margin-bottom: 8px;">{{ candidatura.trabalho.empresa.nome_fantasia }}</p>
+            <div class="meta">
+                <span>📅 {{ candidatura.trabalho.data.strftime('%d/%m/%Y') }}</span>
+                <span>🕐 {{ candidatura.trabalho.horario_inicio.strftime('%H:%M') }} - {{ candidatura.trabalho.horario_fim.strftime('%H:%M') }}</span>
+            </div>
+            <div class="meta">
+                <span>📍 {{ candidatura.trabalho.local_endereco }}, {{ candidatura.trabalho.local_cidade }}</span>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-state-icon">📭</div>
+        <h3>Nenhum trabalho confirmado</h3>
+        <p>Candidate-se a trabalhos disponíveis no mural e aguarde a aprovação das empresas.</p>
+        <a href="{{ url_for('colaborador.mural') }}" class="btn btn-primary">Explorar oportunidades</a>
+    </div>
+    {% endif %}
+    
+    <!-- Candidaturas pendentes -->
+    {% if pendentes %}
+    <div class="page-header" style="border-bottom: none; margin-top: 48px;">
+        <h2>⏳ Candidaturas aguardando resposta</h2>
+    </div>
+    <div class="grid grid-2">
+        {% for candidatura in pendentes %}
+        <div class="card">
+            <div class="flex justify-between items-center" style="margin-bottom: 12px;">
+                <span class="badge badge-warning">Aguardando</span>
+                <form action="{{ url_for('colaborador.cancelar_candidatura', candidatura_id=candidatura.id) }}" method="POST" style="display: inline;">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="btn btn-ghost btn-sm" onclick="return confirm('Cancelar candidatura?')">✕ Cancelar</button>
+                </form>
+            </div>
+            <h3 class="card-title">{{ candidatura.trabalho.titulo }}</h3>
+            <p style="color: var(--gray-600); font-size: 0.95rem;">{{ candidatura.trabalho.empresa.nome_fantasia }}</p>
+            <div class="meta">
+                <span>📅 {{ candidatura.trabalho.data.strftime('%d/%m/%Y') }}</span>
+                <span>💰 R$ {{ "%.2f"|format(candidatura.trabalho.valor_liquido) }}</span>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

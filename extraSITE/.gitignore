@@ -1,0 +1,45 @@
+# Ambiente virtual
+venv/
+.venv/
+env/
+
+# Variáveis de ambiente
+.env
+.env.local
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Banco de dados
+instance/
+*.db
+*.sqlite
+
+# Uploads (opcional - pode querer versionar alguns)
+app/static/uploads/*
+!app/static/uploads/.gitkeep
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+
+# Distribuição
+dist/
+build/
+*.egg-info/
+
+# Migrations locais (se necessário)
+# migrations/versions/*
+
+# Sistema
+.DS_Store
+Thumbs.db

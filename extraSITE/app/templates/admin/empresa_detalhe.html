@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block title %}{{ empresa.nome_fantasia }} - Admin{% endblock %}
+
+{% block content %}
+<div class="container mt-3">
+    <a href="{{ url_for('admin.listar_empresas') }}">&larr; Voltar</a>
+    
+    <div class="card mt-2">
+        <div class="flex gap-2" style="justify-content: space-between; align-items: start;">
+            <div>
+                <h1>{{ empresa.nome_fantasia }}</h1>
+                <p>{{ empresa.razao_social }}</p>
+            </div>
+            {% if empresa.status == 'aguardando_aprovacao' %}
+            <span class="badge badge-warning">Aguardando aprovação</span>
+            {% elif empresa.status == 'ativo' %}
+            <span class="badge badge-success">Ativa</span>
+            {% else %}
+            <span class="badge badge-danger">Suspensa</span>
+            {% endif %}
+        </div>
+        
+        <hr style="margin: 1rem 0;">
+        
+        <div class="grid grid-2">
+            <div>
+                <h3>Dados da empresa</h3>
+                <p><strong>CNPJ:</strong> {{ empresa.cnpj }}</p>
+                <p><strong>Email:</strong> {{ empresa.email }}</p>
+                <p><strong>Telefone:</strong> {{ empresa.telefone }}</p>
+                <p><strong>Contato:</strong> {{ empresa.pessoa_contato }}</p>
+            </div>
+            <div>
+                <h3>Endereço</h3>
+                <p>{{ empresa.endereco_rua }}</p>
+                <p>{{ empresa.endereco_cidade }}/{{ empresa.endereco_estado }}</p>
+                <p>CEP: {{ empresa.endereco_cep }}</p>
+            </div>
+        </div>
+        
+        <hr style="margin: 1rem 0;">
+        
+        <p><strong>Cadastrado em:</strong> {{ empresa.criado_em.strftime('%d/%m/%Y às %H:%M') }}</p>
+        {% if empresa.aprovado_em %}
+        <p><strong>Aprovado em:</strong> {{ empresa.aprovado_em.strftime('%d/%m/%Y às %H:%M') }}</p>
+        {% endif %}
+        {% if empresa.motivo_rejeicao %}
+        <p><strong>Motivo rejeição:</strong> {{ empresa.motivo_rejeicao }}</p>
+        {% endif %}
+        
+        <p><strong>Trabalhos publicados:</strong> {{ empresa.trabalhos.count() }}</p>
+    </div>
+    
+    <!-- Ações -->
+    <div class="card mt-2">
+        <h3>Ações</h3>
+        <div class="flex gap-1 mt-1">
+            {% if empresa.status == 'aguardando_aprovacao' %}
+            <form action="{{ url_for('admin.aprovar_empresa', empresa_id=empresa.id) }}" method="POST" style="display: inline;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="btn btn-secondary">✅ Aprovar empresa</button>
+            </form>
+            <form action="{{ url_for('admin.rejeitar_empresa', empresa_id=empresa.id) }}" method="POST" style="display: inline;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="motivo" value="Dados incompletos ou inválidos">
+                <button type="submit" class="btn btn-danger" onclick="return confirm('Rejeitar esta empresa?')">❌ Rejeitar</button>
+            </form>
+            {% elif empresa.status == 'ativo' %}
+            <form action="{{ url_for('admin.suspender_empresa', empresa_id=empresa.id) }}" method="POST" style="display: inline;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="motivo" value="Suspensa pelo administrador">
+                <button type="submit" class="btn btn-danger" onclick="return confirm('Suspender esta empresa?')">🚫 Suspender</button>
+            </form>
+            {% else %}
+            <form action="{{ url_for('admin.aprovar_empresa', empresa_id=empresa.id) }}" method="POST" style="display: inline;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="btn btn-secondary">✅ Reativar empresa</button>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

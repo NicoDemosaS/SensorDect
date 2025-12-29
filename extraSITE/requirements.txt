@@ -1,0 +1,26 @@
+# Framework
+Flask==3.1.2
+Werkzeug==3.1.4
+
+# Banco de dados
+Flask-SQLAlchemy==3.1.1
+Flask-Migrate==4.1.0
+SQLAlchemy==2.0.45
+
+# Autenticação
+Flask-Login==0.6.3
+
+# Formulários
+Flask-WTF==1.2.2
+WTForms==3.2.1
+email-validator==2.3.0
+
+# Email
+resend==2.0.0
+
+# Utilidades
+python-dotenv==1.2.1
+
+# Produção (opcional)
+# gunicorn==21.2.0
+# psycopg2-binary==2.9.9  # Para PostgreSQL

@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Colaboradores - Admin{% endblock %}
+
+{% block content %}
+<div class="container mt-3">
+    <h1>Colaboradores</h1>
+    
+    {% if colaboradores %}
+    <table class="table mt-2">
+        <thead>
+            <tr>
+                <th>Foto</th>
+                <th>Nome</th>
+                <th>Email</th>
+                <th>Universidade</th>
+                <th>Status</th>
+                <th>Cadastro</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for colaborador in colaboradores %}
+            <tr>
+                <td>
+                    <img src="{{ url_for('static', filename='uploads/' + colaborador.foto_perfil) }}" alt="Foto" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
+                </td>
+                <td>{{ colaborador.nome }}</td>
+                <td>{{ colaborador.email }}</td>
+                <td>{{ colaborador.universidade }}</td>
+                <td>
+                    {% if colaborador.status == 'ativo' %}
+                    <span class="badge badge-success">Ativo</span>
+                    {% else %}
+                    <span class="badge badge-danger">Suspenso</span>
+                    {% endif %}
+                </td>
+                <td>{{ colaborador.criado_em.strftime('%d/%m/%Y') }}</td>
+                <td>
+                    <a href="{{ url_for('admin.ver_colaborador', colaborador_id=colaborador.id) }}" class="btn btn-outline btn-sm">Ver</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="card mt-2 text-center">
+        <p>Nenhum colaborador cadastrado.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

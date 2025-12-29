@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}Meu Perfil - ExtraSITE{% endblock %}
+
+{% block content %}
+<div class="container mt-3" style="max-width: 800px;">
+    <div class="page-header">
+        <h1>👤 Meu Perfil</h1>
+    </div>
+    
+    <div class="card" style="padding: 32px;">
+        <div class="profile-header">
+            <img src="{{ url_for('static', filename='uploads/' + current_user.foto_perfil) }}" alt="Foto" class="profile-avatar profile-avatar-lg">
+            <div class="profile-info">
+                <h2 style="font-size: 1.5rem;">{{ current_user.nome }}</h2>
+                <p style="color: var(--primary); font-weight: 500;">{{ current_user.universidade }}</p>
+                <div class="profile-stats">
+                    <div class="profile-stat">
+                        <div class="profile-stat-value">⭐ {{ current_user.avaliacao_media or '-' }}</div>
+                        <div class="profile-stat-label">Avaliação</div>
+                    </div>
+                    <div class="profile-stat">
+                        <div class="profile-stat-value">{{ current_user.total_trabalhos }}</div>
+                        <div class="profile-stat-label">Trabalhos</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card" style="padding: 32px; margin-top: 24px;">
+        <h3 style="font-size: 1.25rem; margin-bottom: 24px;">✏️ Editar informações</h3>
+        
+        <form method="POST">
+            {{ form.hidden_tag() }}
+            
+            <div class="form-group">
+                {{ form.nome.label }}
+                {{ form.nome(class="form-control") }}
+            </div>
+            
+            <div class="grid grid-2">
+                <div class="form-group">
+                    {{ form.telefone.label }}
+                    {{ form.telefone(class="form-control") }}
+                </div>
+                
+                <div class="form-group">
+                    {{ form.universidade.label }}
+                    {{ form.universidade(class="form-control") }}
+                </div>
+            </div>
+            
+            <div class="form-group">
+                {{ form.bio.label }}
+                {{ form.bio(class="form-control", rows=3) }}
+            </div>
+            
+            <div class="form-group">
+                {{ form.habilidades.label }}
+                {{ form.habilidades(class="form-control", rows=3) }}
+            </div>
+            
+            <div class="form-group">
+                {{ form.chave_pix.label }}
+                {{ form.chave_pix(class="form-control", placeholder="CPF, email, telefone ou chave aleatória") }}
+                <small style="color: var(--gray-500);">💰 Necessário para receber pagamentos pelos trabalhos</small>
+            </div>
+            
+            <button type="submit" class="btn btn-primary btn-lg">Salvar alterações</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

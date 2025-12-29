@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block title %}ExtraSITE - Freelance Universitário{% endblock %}
+
+{% block content %}
+<!-- Hero -->
+<section class="hero">
+    <div class="container">
+        <h1>Conectamos universitários<br>a oportunidades</h1>
+        <p>Trabalhos flexíveis para estudantes. Mão de obra qualificada para empresas. Tudo de forma simples e segura.</p>
+        
+        {% if not current_user.is_authenticated %}
+        <div class="hero-buttons">
+            <a href="{{ url_for('auth.cadastro_colaborador') }}" class="btn btn-white">Sou Universitário</a>
+            <a href="{{ url_for('auth.cadastro_empresa') }}" class="btn btn-outline">Sou Empresa</a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Stats -->
+<section class="stats-section">
+    <div class="container">
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-number">{{ trabalhos|length }}</div>
+                <div class="stat-label">Trabalhos Disponíveis</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">🎯</div>
+                <div class="stat-label">Medianeira e Região</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">{{ TAKE_RATE_PERCENT }}%</div>
+                <div class="stat-label">Taxa da Plataforma</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">💰</div>
+                <div class="stat-label">Pagamento Garantido</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Trabalhos Recentes -->
+<section class="container" style="padding-top: 0;">
+    <div class="section-title">
+        <h2>Oportunidades Recentes</h2>
+        <p>Confira os trabalhos disponíveis para você começar a ganhar dinheiro</p>
+    </div>
+    
+    {% if trabalhos %}
+    <div class="grid grid-3">
+        {% for trabalho in trabalhos %}
+        <div class="trabalho-card">
+            <div class="card-header">
+                <span class="badge badge-info">{{ trabalho.categoria_display }}</span>
+                <span class="valor">R$ {{ "%.2f"|format(trabalho.valor_liquido) }}</span>
+            </div>
+            <h3 class="card-title">{{ trabalho.titulo }}</h3>
+            <div class="meta">
+                <span>📅 {{ trabalho.data.strftime('%d/%m/%Y') }}</span>
+                <span>🕐 {{ trabalho.horario_inicio.strftime('%H:%M') }}</span>
+                <span>📍 {{ trabalho.local_cidade }}</span>
+            </div>
+            <p class="descricao">{{ trabalho.descricao[:100] }}{% if trabalho.descricao|length > 100 %}...{% endif %}</p>
+            <p style="color: var(--gray-500); font-size: 0.875rem;">
+                <span class="status-dot active"></span>{{ trabalho.vagas_disponiveis }} vaga(s) disponível(is)
+            </p>
+            
+            <div class="actions">
+                {% if current_user.is_authenticated and current_user.tipo_usuario == 'colaborador' %}
+                    <a href="{{ url_for('colaborador.ver_trabalho', trabalho_id=trabalho.id) }}" class="btn btn-primary btn-sm w-full">Ver detalhes</a>
+                {% else %}
+                    <a href="{{ url_for('auth.login') }}" class="btn btn-outline btn-sm w-full">Entrar para candidatar</a>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-state-icon">📋</div>
+        <h3>Nenhum trabalho disponível</h3>
+        <p>Volte em breve! Novas oportunidades são publicadas diariamente.</p>
+    </div>
+    {% endif %}
+</section>
+
+<!-- Como Funciona -->
+<section style="background: var(--white); padding: 80px 0;">
+    <div class="container">
+        <div class="section-title">
+            <h2>Como Funciona</h2>
+            <p>Simples, rápido e seguro para todos</p>
+        </div>
+        
+        <div class="features">
+            <div class="feature-card">
+                <div class="icon">📝</div>
+                <h3>1. Cadastre-se</h3>
+                <p>Crie sua conta em poucos minutos. Universitários usam email institucional para verificação.</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon">🔍</div>
+                <h3>2. Encontre</h3>
+                <p>Universitários buscam trabalhos por categoria e região. Empresas publicam oportunidades.</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon">💼</div>
+                <h3>3. Trabalhe</h3>
+                <p>Pagamento garantido pela plataforma. Avaliações mútuas. Sem burocracia.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+{% if not current_user.is_authenticated %}
+<section class="cta-section">
+    <div class="container">
+        <h2>Pronto para começar?</h2>
+        <p>Junte-se à nossa comunidade de universitários e empresas</p>
+        <a href="{{ url_for('auth.cadastro_colaborador') }}" class="btn btn-white">Criar minha conta grátis</a>
+    </div>
+</section>
+{% endif %}
+{% endblock %}

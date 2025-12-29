@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Termos de Uso - {{ PLATFORM_NAME }}{% endblock %}
+
+{% block content %}
+<div class="container mt-3">
+    <div class="page-header" style="justify-content: center; text-align: center;">
+        <div>
+            <h1>📄 Termos de Uso</h1>
+            <p style="color: var(--gray-500); margin-top: 8px;">Condições para uso da plataforma {{ PLATFORM_NAME }}</p>
+        </div>
+    </div>
+    
+    {% if TERMOS_DE_USO %}
+        <div class="policy-content">
+            {{ TERMOS_DE_USO | safe }}
+        </div>
+    {% else %}
+    <div class="card">
+            <div class="text-center" style="padding: 60px 20px;">
+                <div style="font-size: 4rem; margin-bottom: 16px;">📝</div>
+                <h3>Termos em elaboração</h3>
+                <p style="color: var(--gray-500); margin-top: 8px;">
+                    Os termos de uso estão sendo preparados e serão disponibilizados em breve.
+                </p>
+            </div>
+    </div>
+    {% endif %}
+    
+    <!-- Botão Voltar -->
+    <div class="text-center mt-3">
+        <a href="{{ url_for('main.index') }}" class="btn btn-outline">← Voltar para Início</a>
+    </div>
+    
+    <!-- Links para outras políticas -->
+    <div class="grid grid-3 mt-3">
+        <a href="{{ url_for('main.privacidade') }}" class="card text-center" style="text-decoration: none; padding: 24px; transition: var(--transition);">
+            <div style="font-size: 2rem;">🔒</div>
+            <p style="margin-top: 8px; color: var(--gray-600); font-weight: 500;">Política de Privacidade</p>
+        </a>
+        <a href="{{ url_for('main.cancelamento') }}" class="card text-center" style="text-decoration: none; padding: 24px; transition: var(--transition);">
+            <div style="font-size: 2rem;">❌</div>
+            <p style="margin-top: 8px; color: var(--gray-600); font-weight: 500;">Política de Cancelamento</p>
+        </a>
+        <a href="{{ url_for('main.sobre') }}" class="card text-center" style="text-decoration: none; padding: 24px; transition: var(--transition);">
+            <div style="font-size: 2rem;">ℹ️</div>
+            <p style="margin-top: 8px; color: var(--gray-600); font-weight: 500;">Sobre a Plataforma</p>
+        </a>
+    </div>
+</div>
+{% endblock %}

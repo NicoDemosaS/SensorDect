@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Minhas Candidaturas - ExtraSITE{% endblock %}
+
+{% block content %}
+<div class="container mt-3">
+    <h1>Minhas Candidaturas</h1>
+    
+    {% if candidaturas %}
+    <div class="grid grid-2 mt-2">
+        {% for candidatura in candidaturas %}
+        <div class="card">
+            {% if candidatura.status == 'pendente' %}
+            <span class="badge badge-warning">Pendente</span>
+            {% elif candidatura.status == 'aceita' %}
+            <span class="badge badge-success">Aceita</span>
+            {% elif candidatura.status == 'recusada' %}
+            <span class="badge badge-danger">Recusada</span>
+            {% else %}
+            <span class="badge">{{ candidatura.status }}</span>
+            {% endif %}
+            
+            <h3 class="card-title mt-1">{{ candidatura.trabalho.titulo }}</h3>
+            <p>{{ candidatura.trabalho.empresa.nome_fantasia }}</p>
+            
+            <div class="meta">
+                <span>📅 {{ candidatura.trabalho.data.strftime('%d/%m/%Y') }}</span>
+                <span>💰 R$ {{ "%.2f"|format(candidatura.trabalho.valor_liquido) }}</span>
+            </div>
+            
+            <p class="mt-1"><small>Candidatou em: {{ candidatura.candidatou_em.strftime('%d/%m/%Y %H:%M') }}</small></p>
+            
+            <a href="{{ url_for('colaborador.ver_trabalho', trabalho_id=candidatura.trabalho_id) }}" class="btn btn-outline btn-sm mt-1">Ver trabalho</a>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="card mt-2 text-center">
+        <p>Você ainda não se candidatou a nenhum trabalho.</p>
+        <a href="{{ url_for('colaborador.mural') }}" class="btn btn-primary mt-1">Ver trabalhos disponíveis</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
